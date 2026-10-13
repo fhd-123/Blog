@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MySQL 慢 SQL 优化 · 傅浩东的博客</title>
+  <meta name="description" content="从芒果记账项目出发，讲解多条件查询的索引设计与 QueryWrapper 动态查询封装。" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="brand">傅浩东<span class="brand-dot">.</span></a>
+      <nav class="nav-links" style="position:static;transform:none;flex-direction:row;background:none;border:none;box-shadow:none;padding:0;">
+        <a href="../index.html">← 返回首页</a>
+      </nav>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="切换主题"><span class="theme-icon">🌙</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:90px;">
+    <article class="about-card reveal" style="max-width:760px;margin:0 auto;">
+      <span class="post-cat">数据库</span>
+      <h1 style="font-size:1.9rem;margin:14px 0 8px;">MySQL 慢 SQL 优化：我是如何用联合索引把查询砍掉 30%</h1>
+      <p class="post-date" style="margin-bottom:24px;">2025-12-20 · 傅浩东</p>
+
+      <p>在「芒果记账」项目中，账单模块需要支持时间、消费类型、金额范围的多条件复合筛选，最初的查询平均耗时约 120ms，用户感知明显。下面是我的优化过程。</p>
+
+      <h3 style="margin:24px 0 10px;">一、定位慢查询</h3>
+      <p>先用 <code>EXPLAIN</code> 看执行计划，确认是否走了全表扫描、是否命中索引、<code>rows</code> 估算是否过大。多条件联合查询没有合适索引时，MySQL 只能逐行过滤。</p>
+
+      <h3 style="margin:24px 0 10px;">二、设计复合索引</h3>
+      <p>根据高频筛选字段的顺序建立<strong>复合索引</strong>（最左前缀原则），让范围查询字段尽量靠后。建好索引后，复杂查询平均耗时下降到约 80ms，性能提升约 30%。</p>
+
+      <h3 style="margin:24px 0 10px;">三、QueryWrapper 动态封装</h3>
+      <p>用 MyBatis-Plus 的 <code>QueryWrapper</code> 按前端传入条件动态拼接，只在有值时追加 <code>eq / between / ge / le</code>，既灵活又避免无效条件干扰索引命中。</p>
+
+      <pre style="background:var(--bg-soft);padding:16px;border-radius:12px;overflow:auto;font-size:0.85rem;margin:14px 0;"><code>QueryWrapper&lt;Bill&gt; qw = new QueryWrapper&lt;&gt;();
+if (type != null) qw.eq("type", type);
+if (start != null) qw.ge("create_time", start);
+if (end != null) qw.le("create_time", end);
+if (min != null) qw.ge("amount", min);
+if (max != null) qw.le("amount", max);</code></pre>
+
+      <h3 style="margin:24px 0 10px;">四、小结</h3>
+      <p>索引优化不是越多越好，要结合真实查询模式与写入成本权衡。先用 EXPLAIN 说话，再谈方案。</p>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 傅浩东. All Rights Reserved.</p>
+    <p class="footer-sub">基于静态 HTML / CSS / JS 构建 · 可部署于 GitHub Pages</p>
+  </footer>
+  <button class="back-top" id="backTop">↑</button>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

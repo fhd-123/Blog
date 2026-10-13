@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JWT + SpringSecurity 权限隔离 · 傅浩东的博客</title>
+  <meta name="description" content="毕业设计中如何用 JWT 鉴权与业务层权限校验，保证不同家庭只能访问自家数据。" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="brand">傅浩东<span class="brand-dot">.</span></a>
+      <nav class="nav-links" style="position:static;transform:none;flex-direction:row;background:none;border:none;box-shadow:none;padding:0;">
+        <a href="../index.html">← 返回首页</a>
+      </nav>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="切换主题"><span class="theme-icon">🌙</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:90px;">
+    <article class="about-card reveal" style="max-width:760px;margin:0 auto;">
+      <span class="post-cat">安全</span>
+      <h1 style="font-size:1.9rem;margin:14px 0 8px;">JWT + SpringSecurity 实现家庭数据权限隔离</h1>
+      <p class="post-date" style="margin-bottom:24px;">2025-11-08 · 傅浩东</p>
+
+      <p>毕业设计「家庭健康协同管理平台」有一个硬性需求：<strong>不同家庭的成员只能访问自家的健康数据</strong>。这里分享我的实现思路。</p>
+
+      <h3 style="margin:24px 0 10px;">一、JWT 鉴权</h3>
+      <p>用户手机号注册登录后，服务端签发 JWT，载荷中携带用户 ID 与家庭 ID。后续请求在拦截器中解析 Token，拿到当前用户身份，无需查库即可完成基础鉴权。</p>
+
+      <h3 style="margin:24px 0 10px;">二、业务层权限校验</h3>
+      <p>JWT 只解决「你是谁」，不解决「你能看哪份数据」。在每次查询/写入前，我从 Token 取出当前家庭 ID，<strong>强制把 familyId 作为查询条件下推到 SQL</strong>，从数据层面杜绝越权。这是比单纯前端隐藏更可靠的做法。</p>
+
+      <h3 style="margin:24px 0 10px;">三、SpringSecurity 的角色</h3>
+      <p>用 SpringSecurity 做统一的认证入口与异常处理，配合自定义拦截器完成 familyId 注入与校验，让权限逻辑集中、可测试。</p>
+
+      <h3 style="margin:24px 0 10px;">四、小结</h3>
+      <p>权限隔离的黄金法则：<strong>永远不要相信前端传来的身份，永远在后端用真实上下文约束数据范围</strong>。JWT 负责认证，业务校验负责授权，两者缺一不可。</p>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 傅浩东. All Rights Reserved.</p>
+    <p class="footer-sub">基于静态 HTML / CSS / JS 构建 · 可部署于 GitHub Pages</p>
+  </footer>
+  <button class="back-top" id="backTop">↑</button>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
