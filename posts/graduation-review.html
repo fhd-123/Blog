@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>毕业设计复盘 · 傅浩东的博客</title>
+  <meta name="description" content="家庭健康协同管理平台：从需求设计到接口落地的技术取舍复盘。" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="brand">傅浩东<span class="brand-dot">.</span></a>
+      <nav class="nav-links" style="position:static;transform:none;flex-direction:row;background:none;border:none;box-shadow:none;padding:0;">
+        <a href="../index.html">← 返回首页</a>
+      </nav>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="切换主题"><span class="theme-icon">🌙</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:90px;">
+    <article class="about-card reveal" style="max-width:780px;margin:0 auto;">
+      <span class="post-cat">项目复盘</span>
+      <h1 style="font-size:1.9rem;margin:14px 0 8px;">毕业设计复盘：家庭健康协同管理平台</h1>
+      <p class="post-date" style="margin-bottom:24px;">2026-01-26 · 傅浩东</p>
+
+      <p>毕业设计我做了一个基于微信小程序的家庭健康管理平台，从需求到接口全程独立负责。这里复盘几个关键的技术取舍。</p>
+
+      <h3 style="margin:24px 0 10px;">一、为什么用 JWT + 业务层权限</h3>
+      <p>不同家庭只能看自家数据。JWT 解决「你是谁」，但「你能看哪份数据」必须靠业务层把 <code>familyId</code> 下推到每条 SQL。安全不能只靠前端隐藏。</p>
+
+      <h3 style="margin:24px 0 10px;">二、健康阈值检测抽成独立逻辑</h3>
+      <p>血压/血糖等指标录入后自动判断异常。我把阈值规则封装成独立服务，录入接口只管存，评估逻辑单独跑，方便后续调整阈值而不动业务代码。</p>
+
+      <h3 style="margin:24px 0 10px;">三、统计看板用缓存兜底</h3>
+      <p>家庭健康聚合计算开销大，且用户不要求秒级实时。采用「DB 计算 + Redis 带过期缓存」，把数据库压力降下来。</p>
+
+      <h3 style="margin:24px 0 10px;">四、前后端联调靠文档先行</h3>
+      <p>用 Apifox 先定义接口与字段，小程序端和 Vue 管理端并行开发，联调成本大幅降低。</p>
+
+      <p style="margin-top:20px;">一个完整项目最大的收获，是学会在「正确性、性能、开发效率」之间做权衡，而不是追求某一个极致。</p>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 傅浩东. All Rights Reserved.</p>
+    <p class="footer-sub">基于静态 HTML / CSS / JS 构建 · 部署于 GitHub Pages</p>
+  </footer>
+  <button class="back-top" id="backTop">↑</button>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

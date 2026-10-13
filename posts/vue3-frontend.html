@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vue3 前后端联调 · 傅浩东的博客</title>
+  <meta name="description" content="作为后端如何高效与前端协作：接口约定、参数校验与异常对接。" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="brand">傅浩东<span class="brand-dot">.</span></a>
+      <nav class="nav-links" style="position:static;transform:none;flex-direction:row;background:none;border:none;box-shadow:none;padding:0;">
+        <a href="../index.html">← 返回首页</a>
+      </nav>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="切换主题"><span class="theme-icon">🌙</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:90px;">
+    <article class="about-card reveal" style="max-width:780px;margin:0 auto;">
+      <span class="post-cat">前端</span>
+      <h1 style="font-size:1.9rem;margin:14px 0 8px;">Vue3 + Element-Plus 前后端联调实践</h1>
+      <p class="post-date" style="margin-bottom:24px;">2026-01-19 · 傅浩东</p>
+
+      <p>作为后端，我也常和前端同学协作。分享几个让联调更顺滑的经验，技术栈以 Vue3 + Element-Plus 为例。</p>
+
+      <h3 style="margin:24px 0 10px;">一、接口先定义，再写代码</h3>
+      <p>用 Apifox / OpenAPI 把路径、参数、返回结构定下来。前端可以 mock，后端可以对齐，双方并行，不互相阻塞。</p>
+
+      <h3 style="margin:24px 0 10px;">二、统一返回与异常处理</h3>
+      <p>后端用统一响应体（code / message / data），前端按 code 分支处理。异常也走统一拦截，别把堆栈直接抛给前端。</p>
+
+      <h3 style="margin:24px 0 10px;">三、参数校验前后都要做</h3>
+      <p>前端用表单规则拦明显错误提升体验，后端用注解/校验器兜底——永远不要相信前端传来的数据。</p>
+
+      <h3 style="margin:24px 0 10px;">四、用 Element-Plus 快速搭后台</h3>
+      <p>管理端表格、表单、分页用 Element-Plus 组件很快就能成型。我习惯先把接口字段和组件绑定理清，再填逻辑。</p>
+
+      <p style="margin-top:20px;">联调的本质是「契约清晰」。把接口当合同来对待，协作就会很轻松。</p>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 傅浩东. All Rights Reserved.</p>
+    <p class="footer-sub">基于静态 HTML / CSS / JS 构建 · 部署于 GitHub Pages</p>
+  </footer>
+  <button class="back-top" id="backTop">↑</button>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

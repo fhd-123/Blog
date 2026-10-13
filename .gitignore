@@ -10,3 +10,6 @@ node_modules/
 
 # 本地临时
 *.log
+
+# 项目数据（非博客内容）
+.workbuddy/

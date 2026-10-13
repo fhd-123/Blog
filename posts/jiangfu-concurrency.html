@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>江服快跑并发与一致性 · 傅浩东的博客</title>
+  <meta name="description" content="校园跑腿小程序里订单状态流转、声明式事务与缓存如何保障正确性。" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="brand">傅浩东<span class="brand-dot">.</span></a>
+      <nav class="nav-links" style="position:static;transform:none;flex-direction:row;background:none;border:none;box-shadow:none;padding:0;">
+        <a href="../index.html">← 返回首页</a>
+      </nav>
+      <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="切换主题"><span class="theme-icon">🌙</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top:90px;">
+    <article class="about-card reveal" style="max-width:780px;margin:0 auto;">
+      <span class="post-cat">项目复盘</span>
+      <h1 style="font-size:1.9rem;margin:14px 0 8px;">江服快跑：校园跑腿小程序里的并发与数据一致性</h1>
+      <p class="post-date" style="margin-bottom:24px;">2026-02-05 · 傅浩东</p>
+
+      <p>「江服快跑」是一个真实上线的校园跑腿小程序。作为后端，我独立负责订单、用户、配送员模块，最棘手的不是功能，而是<strong>并发与数据一致性</strong>。</p>
+
+      <h3 style="margin:24px 0 10px;">一、订单状态机要防非法流转</h3>
+      <p>订单有「待接单→配送中→已完成」等状态。我用枚举 + 状态流转校验，拒绝非法跳转（比如已完成直接变配送中），并在数据库层用条件更新兜底。</p>
+
+      <h3 style="margin:24px 0 10px;">二、多表操作交给声明式事务</h3>
+      <p>创建订单同时扣减库存/写入流水，必须原子。用 Spring 的 <code>@Transactional</code> 保证要么全成要么全回滚，避免「钱扣了单没下」这类脏数据。</p>
+
+      <h3 style="margin:24px 0 10px;">三、高频读走缓存，但注意一致性</h3>
+      <p>用户、配送员信息读多写少，接入 Redis 缓存。写操作后主动失效对应 key，平衡性能与准确度。</p>
+
+      <h3 style="margin:24px 0 10px;">四、慢查询用索引压住</h3>
+      <p>订单列表是多用户高频查询，我针对筛选条件建联合索引，把高峰期数据库压力明显降下来。</p>
+
+      <p style="margin-top:20px;">并发不可怕，可怕的是「以为没问题」。把边界 case 想在前头，系统才稳。</p>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 傅浩东. All Rights Reserved.</p>
+    <p class="footer-sub">基于静态 HTML / CSS / JS 构建 · 部署于 GitHub Pages</p>
+  </footer>
+  <button class="back-top" id="backTop">↑</button>
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
