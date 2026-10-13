@@ -1,4 +1,4 @@
-// ===== 主题切换 =====
+// ===== 主题切换（默认深空暗色） =====
 (function () {
   const root = document.documentElement;
   const toggle = document.getElementById("themeToggle");
@@ -12,11 +12,10 @@
   }
 
   const saved = localStorage.getItem(STORE);
-  if (saved) {
+  if (saved === "light" || saved === "dark") {
     apply(saved);
   } else {
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    apply(prefersDark ? "dark" : "light");
+    apply("dark"); // 默认深空主题
   }
 
   toggle.addEventListener("click", () => {
@@ -132,4 +131,21 @@
   if (cat) applyFilter("cat", cat);
   else if (tag) applyFilter("tag", tag);
   else applyFilter("all", "");
+})();
+
+// ===== 本站已稳定运行（运行时计数器） =====
+(function () {
+  const el = document.getElementById("uptime");
+  if (!el) return;
+  const LAUNCH = new Date("2026-10-13T00:00:00"); // 站点启航日
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function tick() {
+    let s = Math.max(0, Math.floor((Date.now() - LAUNCH.getTime()) / 1000));
+    const d = Math.floor(s / 86400); s -= d * 86400;
+    const h = Math.floor(s / 3600); s -= h * 3600;
+    const m = Math.floor(s / 60); s -= m * 60;
+    el.textContent = `${d} 天 ${pad(h)} 时 ${pad(m)} 分 ${pad(s)} 秒`;
+  }
+  tick();
+  setInterval(tick, 1000);
 })();

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,46 +8,55 @@
   <link rel="stylesheet" href="../assets/css/style.css" />
 </head>
 <body>
-  <header class="navbar" id="navbar">
+    <header class="navbar" id="navbar">
     <div class="nav-inner">
-      <a href="../index.html" class="brand">傅浩东<span class="brand-dot">.</span></a>
-      <nav class="nav-links" style="position:static;transform:none;flex-direction:row;background:none;border:none;box-shadow:none;padding:0;">
-        <a href="../index.html">← 返回首页</a>
+      <a href="../index.html" class="brand"><span class="brand-mark">✦</span>傅浩东<span class="brand-dot">.</span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="../index.html">首页</a>
+        <a href="../articles.html">文章</a>
+        <a href="../links.html">友链</a>
+        <a href="../about.html">关于</a>
       </nav>
       <div class="nav-right">
-        <button class="theme-toggle" id="themeToggle" aria-label="切换主题"><span class="theme-icon">🌙</span></button>
+        <button class="theme-toggle" id="themeToggle" aria-label="切换主题"><span class="theme-icon">☀️</span></button>
       </div>
     </div>
   </header>
 
   <main class="container" style="padding-top:90px;">
-    <article class="about-card reveal" style="max-width:760px;margin:0 auto;">
+    <article class="post-article reveal">
+      <a class="post-nav-back" href="../articles.html">← 返回文章列表</a>
       <span class="post-cat">后端实践</span>
-      <h1 style="font-size:1.9rem;margin:14px 0 8px;">SpringBoot + Redis 缓存实战：从穿透到雪崩的防护</h1>
-      <p class="post-date" style="margin-bottom:24px;">2026-01-12 · 傅浩东</p>
+      <h1>SpringBoot + Redis 缓存实战：从穿透到雪崩的防护</h1>
+      <p class="post-meta-line">2026-01-12 · 傅浩东</p>
 
       <p>在「江服快跑」和「家庭健康协同管理平台」两个项目中，我都用 Redis 缓存了用户、配送员信息以及家庭健康统计看板等热点数据。这里总结一下我对缓存设计的理解。</p>
 
-      <h3 style="margin:24px 0 10px;">一、什么时候该加缓存</h3>
+      <h3>一、什么时候该加缓存</h3>
       <p>缓存不是银弹。判断标准很简单：<strong>读多写少、计算/查询成本高、对短暂非强一致可容忍</strong>。比如家庭健康统计看板，聚合计算开销大且用户不要求秒级实时，就非常适合「DB 计算 + Redis 带过期缓存」。</p>
 
-      <h3 style="margin:24px 0 10px;">二、过期策略</h3>
+      <h3>二、过期策略</h3>
       <ul class="project-points">
         <li>给每个热点 key 设置合理的 TTL，避免脏数据长期驻留。</li>
         <li>对统计类数据采用「接受短暂非强实时」的折中，降低 DB 聚合压力。</li>
       </ul>
 
-      <h3 style="margin:24px 0 10px;">三、缓存穿透与雪崩</h3>
+      <h3>三、缓存穿透与雪崩</h3>
       <p><strong>穿透</strong>：查询不存在的数据，请求直接打到 DB。对策是缓存空值或布隆过滤器。<strong>雪崩</strong>：大量 key 同时失效。对策是给 TTL 加随机抖动（如 base + random），错开失效时间。</p>
 
-      <h3 style="margin:24px 0 10px;">四、小结</h3>
+      <h3>四、小结</h3>
       <p>缓存的核心权衡是<strong>一致性、性能、复杂度</strong>。先想清楚业务是否容忍弱一致，再决定缓存粒度与过期策略，比盲目加 Redis 重要得多。</p>
     </article>
   </main>
 
-  <footer class="footer">
-    <p>© 2026 傅浩东. All Rights Reserved.</p>
-    <p class="footer-sub">基于静态 HTML / CSS / JS 构建 · 可部署于 GitHub Pages</p>
+    <footer class="footer">
+    <div class="footer-deco">🌸 ✦ 🐟 ✨ 🌟</div>
+    <p class="uptime">本站已稳定运行：<b id="uptime">连接中…</b></p>
+    <div class="tech-badges">
+      <span>HTML</span><span>CSS</span><span>JavaScript</span><span>GitHub Pages</span><span>静态博客</span>
+    </div>
+    <p>© 2026 傅浩东 · 傅浩东の代码宝藏</p>
+    <p class="footer-sub">在代码与系统之间，收集值得收藏的微光 · <a href="../links.html">交换友链 ✉</a></p>
   </footer>
   <button class="back-top" id="backTop">↑</button>
   <script src="../assets/js/main.js"></script>

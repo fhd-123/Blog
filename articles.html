@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>文章 · 傅浩东的博客</title>
+  <title>文章 · 傅浩东の代码宝藏</title>
   <meta name="description" content="傅浩东的全部技术文章：后端实践、数据库、安全、前端、项目复盘、学习笔记与工具。" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>傅</text></svg>" />
   <link rel="stylesheet" href="assets/css/style.css" />
@@ -11,14 +11,15 @@
 <body>
   <header class="navbar" id="navbar">
     <div class="nav-inner">
-      <a href="index.html" class="brand">傅浩东<span class="brand-dot">.</span></a>
+      <a href="index.html" class="brand"><span class="brand-mark">✦</span>傅浩东<span class="brand-dot">.</span></a>
       <nav class="nav-links" id="navLinks">
         <a href="index.html">首页</a>
         <a href="articles.html" class="active">文章</a>
+        <a href="links.html">友链</a>
         <a href="about.html">关于</a>
       </nav>
       <div class="nav-right">
-        <button class="theme-toggle" id="themeToggle" aria-label="切换主题"><span class="theme-icon">🌙</span></button>
+        <button class="theme-toggle" id="themeToggle" aria-label="切换主题"><span class="theme-icon">☀️</span></button>
         <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
       </div>
     </div>
@@ -26,8 +27,8 @@
 
   <section class="page-hero">
     <div class="page-hero-inner">
-      <h1>文章</h1>
-      <p>归档 · 分类 · 标签</p>
+      <h1>文章归档</h1>
+      <p>分类 · 标签 · 在这里翻找每一枚技术微光</p>
     </div>
   </section>
 
@@ -146,8 +147,13 @@
   </main>
 
   <footer class="footer">
-    <p>© 2026 傅浩东. All Rights Reserved.</p>
-    <p class="footer-sub">基于静态 HTML / CSS / JS 构建 · 部署于 GitHub Pages</p>
+    <div class="footer-deco">🌸 ✦ 🐟 ✨ 🌟</div>
+    <p class="uptime">本站已稳定运行：<b id="uptime">连接中…</b></p>
+    <div class="tech-badges">
+      <span>HTML</span><span>CSS</span><span>JavaScript</span><span>GitHub Pages</span><span>静态博客</span>
+    </div>
+    <p>© 2026 傅浩东 · 傅浩东の代码宝藏</p>
+    <p class="footer-sub">在代码与系统之间，收集值得收藏的微光 · <a href="links.html">交换友链 ✉</a></p>
   </footer>
 
   <button class="back-top" id="backTop" aria-label="回到顶部">↑</button>

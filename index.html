@@ -1,39 +1,55 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>傅浩东的博客 · Java 后端开发与技术笔记</title>
-  <meta name="description" content="傅浩东的个人博客，记录 Java 后端开发、数据库优化、全栈实践与学习思考。" />
+  <title>傅浩东の代码宝藏 · Java 后端开发与技术笔记</title>
+  <meta name="description" content="傅浩东的个人博客，记录 Java 后端开发、数据库优化、全栈实践与学习思考。在代码与系统之间，收集属于自己的宝藏。" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>傅</text></svg>" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
   <header class="navbar" id="navbar">
     <div class="nav-inner">
-      <a href="index.html" class="brand">傅浩东<span class="brand-dot">.</span></a>
+      <a href="index.html" class="brand"><span class="brand-mark">✦</span>傅浩东<span class="brand-dot">.</span></a>
       <nav class="nav-links" id="navLinks">
         <a href="index.html" class="active">首页</a>
         <a href="articles.html">文章</a>
+        <a href="links.html">友链</a>
         <a href="about.html">关于</a>
       </nav>
       <div class="nav-right">
-        <button class="theme-toggle" id="themeToggle" aria-label="切换主题" title="切换主题"><span class="theme-icon">🌙</span></button>
+        <button class="theme-toggle" id="themeToggle" aria-label="切换主题" title="切换主题"><span class="theme-icon">☀️</span></button>
         <button class="menu-toggle" id="menuToggle" aria-label="菜单">☰</button>
       </div>
     </div>
   </header>
 
   <section class="hero" id="home">
-    <div class="hero-bg"></div>
+    <div class="hero-stars"></div>
+    <div class="hero-glow"></div>
+    <span class="deco d1">🌸</span>
+    <span class="deco d2">✨</span>
+    <span class="deco d3">🌟</span>
+    <span class="deco d4">🐟</span>
+    <span class="firefly" style="top:30%;left:30%;animation-delay:0s;"></span>
+    <span class="firefly" style="top:60%;left:70%;animation-delay:2s;"></span>
+    <span class="firefly" style="top:45%;left:55%;animation-delay:4s;"></span>
+
     <div class="hero-content">
       <div class="avatar">傅</div>
-      <h1 class="hero-title">你好，我是傅浩东</h1>
-      <p class="hero-sub">Java 后端开发工程师 · 全栈实践者</p>
-      <p class="hero-desc">这里记录我的开发实践、踩坑复盘与学习思考——关于 Spring、MySQL、Redis、安全与前后端协作的一切。</p>
+      <h1 class="hero-title">傅浩东の代码宝藏</h1>
+      <p class="hero-sub">Java 后端开发 · 全栈实践者</p>
+      <p class="hero-tagline">“在代码、数据库与系统之间穿梭的普通人，<br>收集每一处值得收藏的技术微光。”</p>
+      <p class="hero-desc">这里存放我的后端开发实践、踩坑复盘与学习思考——关于 Spring、MySQL、Redis、安全与前后端协作的一切。</p>
       <div class="hero-actions">
-        <a href="articles.html" class="btn btn-primary">阅读最新文章</a>
+        <a href="articles.html" class="btn btn-primary">翻阅宝藏文章</a>
         <a href="about.html" class="btn btn-ghost">关于我</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">8</span><span class="stat-label">篇文章</span></div>
+        <div class="stat"><span class="stat-num">7</span><span class="stat-label">个分类</span></div>
+        <div class="stat"><span class="stat-num">3</span><span class="stat-label">个项目</span></div>
       </div>
     </div>
   </section>
@@ -42,7 +58,7 @@
     <div class="layout">
       <!-- 文章流 -->
       <div class="content">
-        <h2 class="section-title"><span class="title-bar"></span>最新文章</h2>
+        <h2 class="section-title"><span class="title-bar"></span>Latest Insight · 最新文章</h2>
         <div class="post-feed" id="postFeed">
 
           <a class="post-card reveal" href="posts/se-learning-path.html" data-category="学习笔记" data-tags="软件工程 学习路线 本科">
@@ -108,7 +124,7 @@
       <aside class="sidebar">
         <div class="widget reveal">
           <h3 class="widget-title">关于我</h3>
-          <p class="widget-text">傅浩东，Java 后端开发工程师，专注 Spring 生态、数据库优化与全栈实践。软件工程本科在读。</p>
+          <p class="widget-text">傅浩东，Java 后端开发工程师，专注 Spring 生态、数据库优化与全栈实践。软件工程本科在读，在代码里收集属于自己的宝藏。</p>
           <a href="about.html" class="widget-link">查看完整简历 →</a>
         </div>
 
@@ -157,8 +173,13 @@
   </main>
 
   <footer class="footer">
-    <p>© 2026 傅浩东. All Rights Reserved.</p>
-    <p class="footer-sub">基于静态 HTML / CSS / JS 构建 · 部署于 GitHub Pages</p>
+    <div class="footer-deco">🌸 ✦ 🐟 ✨ 🌟</div>
+    <p class="uptime">本站已稳定运行：<b id="uptime">连接中…</b></p>
+    <div class="tech-badges">
+      <span>HTML</span><span>CSS</span><span>JavaScript</span><span>GitHub Pages</span><span>静态博客</span>
+    </div>
+    <p>© 2026 傅浩东 · 傅浩东の代码宝藏</p>
+    <p class="footer-sub">在代码与系统之间，收集值得收藏的微光 · <a href="links.html">交换友链 ✉</a></p>
   </footer>
 
   <button class="back-top" id="backTop" aria-label="回到顶部">↑</button>
