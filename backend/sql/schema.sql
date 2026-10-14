@@ -289,6 +289,7 @@ CREATE TABLE essay (
     title VARCHAR(200) NOT NULL,
     summary VARCHAR(500) DEFAULT '',
     content LONGTEXT,
+    cover_url VARCHAR(500) DEFAULT '',   -- 杂谈封面图，首页 Records 轮播使用
     `date` VARCHAR(20) DEFAULT '',
     tags VARCHAR(255) DEFAULT '',
     sort INT DEFAULT 0,

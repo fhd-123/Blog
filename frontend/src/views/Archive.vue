@@ -28,7 +28,11 @@
       <div>
         <div class="archive-grid">
           <router-link v-for="a in list" :key="a.id" :to="'/articles/' + a.id" class="archive-card reveal" @mousemove="spot">
-            <div class="archive-cover">{{ a.title.charAt(0) }}</div>
+            <div class="archive-cover" :style="coverStyle(a)">
+              <img v-if="a.coverUrl && !coverFail[a.id]" :src="a.coverUrl" :alt="a.title"
+                   loading="lazy" @error="markFail(a.id)" />
+              <span v-else class="cover-letter">{{ a.title.charAt(0) }}</span>
+            </div>
             <div class="archive-body">
               <div class="archive-date">{{ formatDate(a.createTime) }} · {{ a.categoryName || '未分类' }}</div>
               <h3>{{ a.title }}</h3>
@@ -66,6 +70,13 @@ const activeCat = ref(route.query.category || null)
 
 const formatDate = (d) => (d ? d.slice(0, 10) : '')
 const spot = (e) => { const el = e.currentTarget; const r = el.getBoundingClientRect(); el.style.setProperty('--mx', `${e.clientX - r.left}px`); el.style.setProperty('--my', `${e.clientY - r.top}px`) }
+
+// 封面：优先后端 cover_url，加载失败回退渐变+首字（对齐参照站卡片使用真实封面图）
+const coverFail = ref({})
+const markFail = (id) => { coverFail.value[id] = true }
+const coverStyle = (a) => (a.coverUrl && !coverFail.value[a.id])
+  ? {}
+  : { background: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }
 const setTag = (name) => { activeTag.value = name; page.value = 1; load() }
 const setCat = (name) => { activeCat.value = name; page.value = 1; load() }
 

@@ -24,6 +24,7 @@
         <el-form-item label="标题"><el-input v-model="form.title" /></el-form-item>
         <el-form-item label="日期"><el-input v-model="form.date" placeholder="2026-02-18" /></el-form-item>
         <el-form-item label="摘要"><el-input v-model="form.summary" type="textarea" :rows="2" /></el-form-item>
+        <el-form-item label="封面图"><el-input v-model="form.coverUrl" placeholder="图片链接 https://... （首页 Records 轮播封面）" /></el-form-item>
         <el-form-item label="标签"><el-input v-model="form.tags" placeholder="逗号分隔" /></el-form-item>
         <el-form-item label="内容"><el-input v-model="form.content" type="textarea" :rows="4" placeholder="正文（可选）" /></el-form-item>
         <el-form-item label="排序"><el-input-number v-model="form.sort" :min="0" /></el-form-item>
@@ -45,11 +46,11 @@ const list = ref([])
 const loading = ref(false)
 const visible = ref(false)
 const saving = ref(false)
-const form = reactive({ id: null, title: '', date: '', summary: '', tags: '', content: '', sort: 0 })
+const form = reactive({ id: null, title: '', date: '', summary: '', tags: '', content: '', coverUrl: '', sort: 0 })
 
 const load = async () => { loading.value = true; try { list.value = await adminGetEssays() } catch (e) {} finally { loading.value = false } }
 const open = (row) => {
-  Object.assign(form, { id: null, title: '', date: '', summary: '', tags: '', content: '', sort: 0 })
+  Object.assign(form, { id: null, title: '', date: '', summary: '', tags: '', content: '', coverUrl: '', sort: 0 })
   if (row) Object.assign(form, row)
   visible.value = true
 }

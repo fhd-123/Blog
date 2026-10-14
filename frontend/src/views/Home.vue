@@ -71,7 +71,11 @@
             <div v-for="(a, i) in latest" :key="a.id" class="slide" :class="{ active: i === idx }"
                  @click="go('/articles/' + a.id)">
               <div class="slide-inner">
-                <div class="slide-cover">{{ a.title.charAt(0) }}</div>
+                <div class="slide-cover" :style="coverStyle(a)">
+                  <img v-if="a.coverUrl && !coverFail[a.id]" :src="a.coverUrl" :alt="a.title"
+                       loading="lazy" @error="markFail(a.id)" />
+                  <span v-else class="cover-letter">{{ a.title.charAt(0) }}</span>
+                </div>
                 <div class="slide-meta">
                   <div class="s-date">{{ formatDate(a.createTime) }}</div>
                   <div class="s-title">{{ a.title }}</div>
@@ -103,7 +107,11 @@
               <div class="carousel-body" @mouseenter="stopAutoC" @mouseleave="startAutoC">
                 <div v-for="(c, i) in chatter" :key="c.id" class="slide" :class="{ active: i === idxC }" @click="go('/chatter')">
                   <div class="slide-inner">
-                    <div class="slide-cover" style="width:90px;">📝</div>
+                    <div class="slide-cover" style="width:90px;" :style="essayCover(c)">
+                      <img v-if="c.coverUrl && !coverFail['e' + c.id]" :src="c.coverUrl" :alt="c.title"
+                           loading="lazy" @error="markFail('e' + c.id)" />
+                      <span v-else class="cover-letter">📝</span>
+                    </div>
                     <div class="slide-meta">
                       <div class="s-date">{{ c.date }}</div>
                       <div class="s-title">{{ c.title }}</div>
@@ -188,6 +196,16 @@ const toggleTheme = () => {
 }
 
 const formatDate = (d) => (d ? d.slice(0, 10) : '')
+
+// 封面：优先后端 cover_url，加载失败回退渐变+首字
+const coverFail = ref({})
+const markFail = (id) => { coverFail.value[id] = true }
+const coverStyle = (a) => (a.coverUrl && !coverFail.value[a.id])
+  ? {}
+  : { background: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }
+const essayCover = (c) => (c.coverUrl && !coverFail.value['e' + c.id])
+  ? {}
+  : { background: 'linear-gradient(135deg, var(--gem-violet), var(--accent))' }
 const github = 'https://github.com/fhd-123'
 // 照片墙海报：优先使用首张照片的真实图片，其次回退渐变（对齐参照站的首图海报）
 const posterStyle = computed(() => {

@@ -13,6 +13,9 @@ public class Essay {
     private String title;
     private String summary;
     private String content;
+    /** 杂谈封面图 */
+    @TableField(value = "cover_url")
+    private String coverUrl;
     private String date;
     private String tags;
     private Integer sort;
