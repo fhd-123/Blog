@@ -24,7 +24,7 @@
         <el-form-item label="标题"><el-input v-model="form.caption" /></el-form-item>
         <el-form-item label="日期"><el-input v-model="form.date" placeholder="2026-02-14" /></el-form-item>
         <el-form-item label="图标"><el-input v-model="form.emoji" placeholder="🌄" /></el-form-item>
-        <el-form-item label="渐变"><el-input v-model="form.gradient" placeholder="linear-gradient(135deg,#e8c46a,#8b5cf6)" /></el-form-item>
+        <el-form-item label="渐变"><el-input v-model="form.gradient" placeholder="linear-gradient(135deg,#6366f1,#a78bfa)" /></el-form-item>
         <el-form-item label="排序"><el-input-number v-model="form.sort" :min="0" /></el-form-item>
       </el-form>
       <template #footer>

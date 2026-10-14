@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <SearchBar class="reveal" />
     <div class="archive-hero">
       <router-link to="/" class="back-link">← 返回上一级</router-link>
       <span class="eyebrow">Archive · 中枢链路矩阵</span>
@@ -49,6 +50,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticles, getTags, getCategories } from '../api/blog'
 import { useReveal } from '../composables/useReveal'
+import SearchBar from '../components/SearchBar.vue'
 
 useReveal()
 const route = useRoute()
