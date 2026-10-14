@@ -184,10 +184,15 @@ a { color: var(--accent); text-decoration: none; }
 .theme-block .tb-label { font-size: .82rem; color: var(--text-soft); }
 
 /* 数据面板 */
-.dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; padding: 20px 22px; }
-.dash-item { text-align: center; padding: 12px; border-radius: 14px; background: var(--bg-soft); }
-.dash-num { font-family: var(--serif); font-size: 1.5rem; font-weight: 900; color: var(--accent); }
-.dash-label { font-size: .74rem; color: var(--text-soft); margin-top: 4px; }
+.dashboard { padding: 22px 24px; display: flex; flex-direction: column; }
+.dash-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.dash-uptime { font-size: .82rem; color: var(--text-soft); }
+.dash-uptime b { color: var(--accent); font-family: var(--serif); }
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.dash-item { text-align: center; padding: 14px 10px; border-radius: 14px; background: var(--bg-soft); transition: transform .25s var(--ease); }
+.dash-item:hover { transform: translateY(-3px); }
+.dash-num { font-family: var(--serif); font-size: 1.45rem; font-weight: 900; color: var(--accent); }
+.dash-label { font-size: .72rem; color: var(--text-soft); margin-top: 4px; letter-spacing: .1em; }
 
 /* ============================================================
    通用 hero（内页）

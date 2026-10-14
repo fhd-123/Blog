@@ -15,4 +15,15 @@ public class PhotoServiceImpl extends ServiceImpl<PhotoMapper, Photo> implements
     public List<Photo> listSorted() {
         return this.list(new LambdaQueryWrapper<Photo>().orderByAsc(Photo::getSort).orderByDesc(Photo::getCreateTime));
     }
+
+    @Override
+    public List<Photo> search(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) return new java.util.ArrayList<>();
+        LambdaQueryWrapper<Photo> q = new LambdaQueryWrapper<Photo>()
+                .like(Photo::getCaption, keyword)
+                .or().like(Photo::getEmoji, keyword)
+                .orderByDesc(Photo::getCreateTime);
+        q.last("LIMIT 8");
+        return this.list(q);
+    }
 }

@@ -1,5 +1,6 @@
 <template>
   <div class="home-wrap">
+    <SearchBar class="reveal" />
     <div class="home-grid">
       <!-- 第一行：个人信息 + 播放器 -->
       <div class="col-7">
@@ -127,13 +128,23 @@
       <!-- 数据面板 -->
       <div class="col-12">
         <div class="bento dashboard reveal">
-          <div class="dash-item"><div class="dash-num">{{ stats.articleCount || 0 }}</div><div class="dash-label">文章</div></div>
-          <div class="dash-item"><div class="dash-num">{{ stats.categoryCount || 0 }}</div><div class="dash-label">分类</div></div>
-          <div class="dash-item"><div class="dash-num">{{ stats.tagCount || 0 }}</div><div class="dash-label">标签</div></div>
-          <div class="dash-item"><div class="dash-num">{{ stats.chatterCount || 0 }}</div><div class="dash-label">杂谈</div></div>
-          <div class="dash-item"><div class="dash-num">{{ stats.photoCount || 0 }}</div><div class="dash-label">照片</div></div>
-          <div class="dash-item"><div class="dash-num">{{ stats.friendCount || 0 }}</div><div class="dash-label">友链</div></div>
-          <div class="dash-item"><div class="dash-num">{{ stats.commentCount || 0 }}</div><div class="dash-label">评论</div></div>
+          <div class="dash-head">
+            <span class="eyebrow" style="margin:0;">Site Dashboard</span>
+            <span class="dash-uptime">系统已稳定运行：<b>{{ uptimeText }}</b></span>
+          </div>
+          <div class="dash-grid">
+            <div class="dash-item"><div class="dash-num">{{ stats.articleCount || 0 }}</div><div class="dash-label">文章</div></div>
+            <div class="dash-item"><div class="dash-num">{{ stats.categoryCount || 0 }}</div><div class="dash-label">分类</div></div>
+            <div class="dash-item"><div class="dash-num">{{ stats.tagCount || 0 }}</div><div class="dash-label">标签</div></div>
+            <div class="dash-item"><div class="dash-num">{{ stats.chatterCount || 0 }}</div><div class="dash-label">杂谈</div></div>
+            <div class="dash-item"><div class="dash-num">{{ stats.photoCount || 0 }}</div><div class="dash-label">照片</div></div>
+            <div class="dash-item"><div class="dash-num">{{ stats.friendCount || 0 }}</div><div class="dash-label">友链</div></div>
+            <div class="dash-item"><div class="dash-num">{{ stats.commentCount || 0 }}</div><div class="dash-label">评论</div></div>
+          </div>
+          <div class="tech-badges" style="margin-top:16px;">
+            <span>Spring Boot</span><span>Vue 3</span><span>Element Plus</span>
+            <span>MySQL</span><span>MyBatis-Plus</span><span>前后端分离</span>
+          </div>
         </div>
       </div>
     </div>
@@ -144,6 +155,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getLatestArticles, getStats, getProfile, getPhotos, getEssays } from '../api/blog'
+import SearchBar from '../components/SearchBar.vue'
 import { useReveal } from '../composables/useReveal'
 import { usePlayer } from '../composables/player'
 
@@ -209,8 +221,26 @@ onMounted(async () => {
   init().then(() => { ready.value = true }).catch(() => { ready.value = true })
   if (latest.value.length) startAuto()
   if (chatter.value.length) startAutoC()
+  onUptime()
 })
-onUnmounted(() => { stopAuto(); stopAutoC() })
+onUnmounted(() => { stopAuto(); stopAutoC(); clearInterval(uptimeTimer) })
+
+// 运行时间（模拟参照站 uptime，起点为首次访问日期）
+const uptimeText = ref('00:00:00')
+let uptimeTimer = null
+const onUptime = () => {
+  const KEY = 'site_boot'
+  let boot = localStorage.getItem(KEY)
+  if (!boot) { boot = String(Date.now()); localStorage.setItem(KEY, boot) }
+  const start = Number(boot)
+  const tick = () => {
+    const s = Math.floor((Date.now() - start) / 1000)
+    const p = (n) => String(n).padStart(2, '0')
+    uptimeText.value = `${p(Math.floor(s / 3600))}:${p(Math.floor((s % 3600) / 60))}:${p(s % 60)}`
+  }
+  tick()
+  uptimeTimer = setInterval(tick, 1000)
+}
 </script>
 
 <style scoped>

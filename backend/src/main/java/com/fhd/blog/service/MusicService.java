@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MusicService extends IService<Music> {
     List<Music> listSorted();
+
+    List<Music> search(String keyword);
 }

@@ -15,4 +15,16 @@ public class MusicServiceImpl extends ServiceImpl<MusicMapper, Music> implements
     public List<Music> listSorted() {
         return this.list(new LambdaQueryWrapper<Music>().orderByAsc(Music::getSort).orderByDesc(Music::getCreateTime));
     }
+
+    @Override
+    public List<Music> search(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) return new java.util.ArrayList<>();
+        LambdaQueryWrapper<Music> q = new LambdaQueryWrapper<Music>()
+                .like(Music::getName, keyword)
+                .or().like(Music::getArtist, keyword)
+                .or().like(Music::getMood, keyword)
+                .orderByAsc(Music::getSort);
+        q.last("LIMIT 8");
+        return this.list(q);
+    }
 }

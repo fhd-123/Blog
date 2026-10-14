@@ -139,4 +139,26 @@ public class PublicController {
     public Result<List<Essay>> essays() {
         return Result.success(essayService.listSorted());
     }
+
+    /**
+     * 全站聚合检索：同时匹配文章、杂谈、项目、照片、音乐。
+     * 结果按类型分组返回，便于前端在搜索面板中分区展示。
+     */
+    @GetMapping("/search")
+    public Result<Map<String, Object>> search(@RequestParam String keyword) {
+        String kw = keyword == null ? "" : keyword.trim();
+        Map<String, Object> data = new HashMap<>();
+        data.put("keyword", kw);
+
+        ArticleQueryDTO aq = new ArticleQueryDTO();
+        aq.setKeyword(kw);
+        aq.setPage(1);
+        aq.setPageSize(8);
+        data.put("articles", articleService.pageArticles(aq).getList());
+        data.put("essays", essayService.search(kw));
+        data.put("projects", projectService.search(kw));
+        data.put("photos", photoService.search(kw));
+        data.put("musics", musicService.search(kw));
+        return Result.success(data);
+    }
 }

@@ -15,4 +15,16 @@ public class EssayServiceImpl extends ServiceImpl<EssayMapper, Essay> implements
     public List<Essay> listSorted() {
         return this.list(new LambdaQueryWrapper<Essay>().orderByAsc(Essay::getSort).orderByDesc(Essay::getCreateTime));
     }
+
+    @Override
+    public List<Essay> search(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) return new java.util.ArrayList<>();
+        LambdaQueryWrapper<Essay> q = new LambdaQueryWrapper<Essay>()
+                .like(Essay::getTitle, keyword)
+                .or().like(Essay::getSummary, keyword)
+                .or().like(Essay::getContent, keyword)
+                .orderByDesc(Essay::getCreateTime);
+        q.last("LIMIT 8");
+        return this.list(q);
+    }
 }

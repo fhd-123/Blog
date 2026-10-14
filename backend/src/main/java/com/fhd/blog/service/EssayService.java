@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface EssayService extends IService<Essay> {
     List<Essay> listSorted();
+
+    List<Essay> search(String keyword);
 }

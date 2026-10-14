@@ -17,6 +17,7 @@ export const getMusics = () => request.get('/public/musics')
 export const getTree = () => request.get('/public/tree')
 export const getMoments = () => request.get('/public/moments')
 export const getEssays = () => request.get('/public/essays')
+export const searchAll = (keyword) => request.get('/public/search', { params: { keyword } })
 
 export const adminLogin = (data) => request.post('/admin/login', data)
 export const adminGetArticles = (params) => request.get('/admin/articles', { params })

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ProjectService extends IService<Project> {
     List<Project> listVisible();
+
+    List<Project> search(String keyword);
 }

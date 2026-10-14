@@ -4,7 +4,8 @@ import { ElMessage } from 'element-plus'
 const routes = [
   { path: '/', name: 'Home', component: () => import('../views/Home.vue') },
   { path: '/articles', redirect: '/archive' },
-  { path: '/archive', name: 'Archive', component: () => import('../views/Archive.vue') },
+  { path: '/timeline', name: 'Archive', component: () => import('../views/Archive.vue') },
+  { path: '/archive', redirect: '/timeline' },
   { path: '/projects', name: 'Projects', component: () => import('../views/Projects.vue') },
   { path: '/articles/:id', name: 'ArticleDetail', component: () => import('../views/ArticleDetail.vue') },
   { path: '/photowall', name: 'PhotoWall', component: () => import('../views/PhotoWall.vue') },

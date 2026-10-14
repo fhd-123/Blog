@@ -17,4 +17,17 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
                 .eq(Project::getStatus, 1)
                 .orderByAsc(Project::getSort).orderByDesc(Project::getCreateTime));
     }
+
+    @Override
+    public List<Project> search(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) return new java.util.ArrayList<>();
+        LambdaQueryWrapper<Project> q = new LambdaQueryWrapper<Project>()
+                .eq(Project::getStatus, 1)
+                .and(w -> w.like(Project::getTitle, keyword)
+                        .or().like(Project::getDescription, keyword)
+                        .or().like(Project::getTags, keyword))
+                .orderByAsc(Project::getSort);
+        q.last("LIMIT 8");
+        return this.list(q);
+    }
 }

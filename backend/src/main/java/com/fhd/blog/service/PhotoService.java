@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface PhotoService extends IService<Photo> {
     List<Photo> listSorted();
+
+    List<Photo> search(String keyword);
 }

@@ -11,7 +11,7 @@
         <nav class="nav-links nav-center" :class="{ open: menuOpen }" @click="menuOpen = false">
           <router-link to="/">首页</router-link>
           <router-link to="/projects">项目</router-link>
-          <router-link to="/archive">归档</router-link>
+          <router-link to="/timeline">归档</router-link>
           <router-link to="/photowall">照片墙</router-link>
           <router-link to="/music">音乐</router-link>
           <router-link to="/tree">灵境</router-link>
