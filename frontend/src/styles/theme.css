@@ -15,8 +15,8 @@
   --border: #e2e8f0;
   --shadow: 0 10px 34px rgba(30, 41, 59, 0.10);
   --shadow-hover: 0 22px 60px rgba(30, 41, 59, 0.16);
-  --radius: 20px;
-  --radius-lg: 28px;
+  --radius: 16px;
+  --radius-lg: 24px;
   --maxw: 1152px;
   --nav-h: 64px;
   --serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "SimSun", "STSong", serif;
@@ -38,7 +38,8 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 16px); -webkit-font-smoothing: antialiased; }
-body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.85; font-size: 16px; transition: background .6s var(--ease), color .6s var(--ease); overflow-x: hidden; }
+/* 参照站 globals.css：正文全局使用衬线字体（Noto Serif SC / 宋体），这是其最强识别特征 */
+body { font-family: var(--serif); background: var(--bg); color: var(--text); line-height: 1.85; font-size: 16px; transition: background .6s var(--ease), color .6s var(--ease); overflow-x: hidden; }
 
 /* 噪点 + 顶部柔光 */
 body::before {
@@ -57,7 +58,8 @@ body::after {
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 * { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--accent) 40%, transparent) transparent; }
 
-h1, h2, h3, h4 { font-family: var(--serif); font-weight: 900; letter-spacing: .3px; }
+/* 参照站：标题 900 字重 + 负字距 */
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 900; letter-spacing: -0.02em; }
 .eyebrow { font-family: var(--sans); font-size: .76rem; letter-spacing: .28em; text-transform: uppercase; color: var(--accent); font-weight: 700; display: inline-block; margin-bottom: 14px; }
 .lead { color: var(--text-soft); font-size: 1.06rem; max-width: 60ch; }
 a { color: var(--accent); text-decoration: none; }
@@ -83,8 +85,10 @@ a { color: var(--accent); text-decoration: none; }
 .nav-links.nav-center { flex: 1; justify-content: center; gap: 4px; }
 .nav-links.nav-center a { padding: 8px 12px; }
 .nav-links a {
+  font-family: var(--sans);
   color: var(--text-soft); font-weight: 700; position: relative; padding: 8px 14px; border-radius: 12px;
   font-size: .92rem; transition: color .25s var(--ease), background .25s var(--ease); overflow: hidden;
+  text-decoration: none;
 }
 .nav-links a:hover { color: var(--text); background: var(--accent-soft); }
 /* PC 端激活态：文字变强调色 + 下方呼吸小圆点（对齐参照站 Navbar） */
@@ -206,7 +210,7 @@ a { color: var(--accent); text-decoration: none; }
 /* ============================================================
    通用 hero（内页）
    ============================================================ */
-.back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--text-soft); font-size: .85rem; font-weight: 600; margin-bottom: 18px; transition: gap .25s var(--ease), color .25s var(--ease); }
+.back-link { font-family: var(--sans); display: inline-flex; align-items: center; gap: 6px; color: var(--text-soft); font-size: .85rem; font-weight: 600; margin-bottom: 18px; transition: gap .25s var(--ease), color .25s var(--ease); }
 .back-link:hover { gap: 11px; color: var(--accent); }
 .page-hero { text-align: center; padding: 30px 0 10px; position: relative; z-index: 1; }
 .page-hero h1 { font-size: clamp(1.9rem, 4.4vw, 2.8rem); font-weight: 900; line-height: 1.2; }
@@ -463,7 +467,7 @@ a { color: var(--accent); text-decoration: none; }
 @media (max-width: 768px) {
   .nav-links { position: absolute; top: var(--nav-h); left: 0; right: 0; flex-direction: column; gap: 0; background: var(--bg-elev); border-bottom: 1px solid var(--border); padding: 8px 0; transform: translateY(-130%); transition: transform .35s var(--ease); box-shadow: var(--shadow); }
   .nav-links.open { transform: translateY(0); }
-  .nav-links a { padding: 13px 24px; border-radius: 0; }
+  .nav-links a { font-family: var(--sans); padding: 13px 24px; border-radius: 0; }
   .nav-links a.router-link-active { border-radius: 0; }
   .menu-toggle { display: flex; }
   .article-detail { padding: 26px 20px; }
