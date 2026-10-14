@@ -65,27 +65,26 @@
 
       <!-- 第二行：文章轮播 + 照片墙 + 说说 + 主题块 -->
       <div class="col-4">
-        <div class="bento carousel-card reveal">
-          <div class="carousel-head"><h3>Latest Insight</h3><span style="font-size:.78rem;color:var(--text-soft);">{{ latest.length }} 篇</span></div>
-          <div class="carousel-body" @mouseenter="stopAuto" @mouseleave="startAuto">
-            <div v-for="(a, i) in latest" :key="a.id" class="slide" :class="{ active: i === idx }"
-                 @click="go('/articles/' + a.id)">
-              <div class="slide-inner">
-                <div class="slide-cover" :style="coverStyle(a)">
-                  <img v-if="a.coverUrl && !coverFail[a.id]" :src="a.coverUrl" :alt="a.title"
-                       loading="lazy" @error="markFail(a.id)" />
-                  <span v-else class="cover-letter">{{ a.title.charAt(0) }}</span>
-                </div>
-                <div class="slide-meta">
-                  <div class="s-date">{{ formatDate(a.createTime) }}</div>
-                  <div class="s-title">{{ a.title }}</div>
-                  <div class="s-desc">{{ a.summary }}</div>
-                </div>
-              </div>
-            </div>
+        <!-- 对齐参照站 LatestPostsCarousel：整卡封面图 + 底部叠字 + 右下角指示条 -->
+        <div class="bento insight-card reveal" @click="goToArticle">
+          <div class="ic-bg" :class="{ zoom: !!(cur.coverUrl && !coverFail[cur.id]) }" :style="coverStyle(cur)">
+            <img v-if="cur.coverUrl && !coverFail[cur.id]" :src="cur.coverUrl" :alt="cur.title" />
+            <span v-else class="cover-letter">{{ (cur.title || '').charAt(0) }}</span>
           </div>
-          <div class="carousel-dots">
-            <span v-for="(a, i) in latest" :key="a.id" :class="{ active: i === idx }" @click="idx = i"></span>
+          <div class="ic-scrim"></div>
+          <div class="ic-text">
+            <div class="ic-badges">
+              <span class="ic-badge-main">Latest Insight</span>
+              <span v-if="cur.createTime" class="ic-badge-date">{{ formatDateTime(cur.createTime) }}</span>
+            </div>
+            <h2>{{ cur.title }}</h2>
+            <p>{{ cur.summary }}</p>
+          </div>
+          <div v-if="latest.length > 1" class="ic-dots">
+            <button v-for="(a, i) in latest" :key="a.id"
+                    :class="{ active: i === idx }"
+                    @click.stop="idx = i"
+                    :aria-label="`切换到第 ${i + 1} 篇文章`"></button>
           </div>
         </div>
       </div>
@@ -102,26 +101,25 @@
           </router-link>
 
           <div class="home-right-grid">
-            <div class="bento carousel-card reveal">
-              <div class="carousel-head"><h3>Records</h3></div>
-              <div class="carousel-body" @mouseenter="stopAutoC" @mouseleave="startAutoC">
-                <div v-for="(c, i) in chatter" :key="c.id" class="slide" :class="{ active: i === idxC }" @click="go('/chatter')">
-                  <div class="slide-inner">
-                    <div class="slide-cover" style="width:90px;" :style="essayCover(c)">
-                      <img v-if="c.coverUrl && !coverFail['e' + c.id]" :src="c.coverUrl" :alt="c.title"
-                           loading="lazy" @error="markFail('e' + c.id)" />
-                      <span v-else class="cover-letter">📝</span>
-                    </div>
-                    <div class="slide-meta">
-                      <div class="s-date">{{ c.date }}</div>
-                      <div class="s-title">{{ c.title }}</div>
-                      <div class="s-desc">{{ c.summary }}</div>
-                    </div>
-                  </div>
-                </div>
+            <!-- 对齐参照站 LatestChatterCarousel：整卡封面 + 左侧渐变压暗 + 居中文本 -->
+            <div class="bento records-card reveal" @click="go('/chatter')">
+              <div class="rc-bg" :style="essayCover(curC)">
+                <img v-if="curC.coverUrl && !coverFail['e' + curC.id]" :src="curC.coverUrl" alt="Chatter Cover" />
               </div>
-              <div class="carousel-dots">
-                <span v-for="(c, i) in chatter" :key="c.id" :class="{ active: i === idxC }" @click="idxC = i"></span>
+              <div class="rc-scrim"></div>
+              <div class="rc-text">
+                <div class="rc-badges">
+                  <span class="rc-badge-main">Records</span>
+                  <span v-if="curC.date" class="rc-date">{{ curC.date }}</span>
+                </div>
+                <h3>{{ curC.title }}</h3>
+                <p>{{ curC.summary }}</p>
+              </div>
+              <div v-if="chatter.length > 1" class="ic-dots">
+                <button v-for="(c, i) in chatter" :key="c.id"
+                        :class="{ active: i === idxC }"
+                        @click.stop="idxC = i"
+                        :aria-label="`切换到第 ${i + 1} 条杂谈`"></button>
               </div>
             </div>
 
@@ -195,6 +193,12 @@ const toggleTheme = () => {
 }
 
 const formatDate = (d) => (d ? d.slice(0, 10) : '')
+// 参照站 formattedDate：YYYY.MM.DD HH:mm
+const formatDateTime = (d) => {
+  if (!d) return ''
+  const s = String(d).slice(0, 16)
+  return s.replace(/-/g, '.').replace(' ', ' ')
+}
 
 // 封面：优先后端 cover_url，加载失败回退渐变+首字
 const coverFail = ref({})
@@ -229,15 +233,18 @@ const posterStyle = computed(() => {
     : { background: p.gradient || 'linear-gradient(135deg, var(--accent), var(--accent-2))' }
 })
 
-// 文章轮播
+// 文章轮播（对齐参照站：5s 自动切换）
 const idx = ref(0)
+const cur = computed(() => latest.value[idx.value] || { title: '', summary: '', coverUrl: '', id: null })
+const goToArticle = () => { if (cur.value.id) go('/articles/' + cur.value.id) }
 let timer = null
-const startAuto = () => { stopAuto(); timer = setInterval(() => { if (latest.value.length) idx.value = (idx.value + 1) % latest.value.length }, 4000) }
+const startAuto = () => { stopAuto(); if (latest.value.length > 1) timer = setInterval(() => { if (latest.value.length) idx.value = (idx.value + 1) % latest.value.length }, 5000) }
 const stopAuto = () => { if (timer) clearInterval(timer) }
-// 杂谈轮播
+// 杂谈轮播（对齐参照站：6s 自动切换）
 const idxC = ref(0)
+const curC = computed(() => chatter.value[idxC.value] || { title: '', summary: '', coverUrl: '', id: null, date: '' })
 let timerC = null
-const startAutoC = () => { stopAutoC(); timerC = setInterval(() => { if (chatter.value.length) idxC.value = (idxC.value + 1) % chatter.value.length }, 4000) }
+const startAutoC = () => { stopAutoC(); if (chatter.value.length > 1) timerC = setInterval(() => { if (chatter.value.length) idxC.value = (idxC.value + 1) % chatter.value.length }, 6000) }
 const stopAutoC = () => { if (timerC) clearInterval(timerC) }
 
 onMounted(async () => {
@@ -283,4 +290,40 @@ const onUptime = () => {
 .home-right-col { display: flex; flex-direction: column; gap: 20px; }
 .home-right-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
 @media (max-width: 920px) { .home-right-grid { grid-template-columns: 1fr; } }
+
+/* ===== Latest Insight 整卡封面 ===== */
+.insight-card { position: relative; min-height: 420px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; cursor: pointer; }
+.ic-bg { position: absolute; inset: 0; z-index: 0; transition: transform 1s var(--ease-out); }
+.insight-card:hover .ic-bg { transform: scale(1.05); }
+.ic-bg img { width: 100%; height: 100%; object-fit: cover; opacity: .9; display: block; }
+.ic-bg .cover-letter { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 5rem; font-weight: 900; color: #fff; opacity: .25; }
+.ic-scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(0,0,0,.9), rgba(0,0,0,.3) 50%, transparent); }
+.ic-text { position: relative; z-index: 2; padding: 24px 22px 44px; color: #fff; }
+.ic-badges { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.ic-badge-main { padding: 4px 12px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 80%, transparent); backdrop-filter: blur(8px); font-size: .62rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; color: #fff; box-shadow: var(--shadow); }
+.ic-badge-date { padding: 3px 10px; border-radius: 999px; background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.2); font-size: .68rem; color: rgba(255,255,255,.9); font-variant-numeric: tabular-nums; }
+.ic-text h2 { font-family: var(--serif); font-size: 1.45rem; font-weight: 700; color: #fff; margin-bottom: 8px; text-shadow: 0 2px 8px rgba(0,0,0,.5); transition: transform .35s var(--ease); }
+.insight-card:hover .ic-text h2 { transform: translateY(-4px); }
+.ic-text p { font-size: .85rem; color: rgba(255,255,255,.8); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
+.ic-dots { position: absolute; bottom: 16px; right: 22px; z-index: 3; display: flex; gap: 6px; align-items: center; }
+.ic-dots button { height: 6px; border: none; border-radius: 999px; cursor: pointer; padding: 0; transition: width .5s var(--ease), background .3s var(--ease); width: 8px; background: rgba(255,255,255,.4); }
+.ic-dots button:hover { background: rgba(255,255,255,.8); }
+.ic-dots button.active { width: 24px; background: color-mix(in srgb, var(--accent-2) 85%, transparent); }
+@media (max-width: 768px) { .insight-card { min-height: 340px; } }
+
+/* ===== Records 杂谈整卡封面 ===== */
+.records-card { position: relative; min-height: 220px; display: flex; flex-direction: column; justify-content: center; overflow: hidden; cursor: pointer; }
+.rc-bg { position: absolute; inset: 0; z-index: 0; transition: transform 1s var(--ease-out); }
+.records-card:hover .rc-bg { transform: scale(1.05); }
+.rc-bg img { width: 100%; height: 100%; object-fit: cover; opacity: .8; display: block; }
+[data-theme="dark"] .rc-bg img { opacity: .6; }
+.rc-scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to right, rgba(0,0,0,.8), rgba(0,0,0,.4) 50%, rgba(0,0,0,.1)); }
+.rc-text { position: relative; z-index: 2; padding: 22px 26px; color: #fff; width: 100%; }
+.rc-badges { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 8px; }
+.rc-badge-main { padding: 3px 8px; border-radius: 6px; font-size: .6rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-2); background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(4px); }
+.rc-date { font-size: .7rem; color: rgba(255,255,255,.72); font-variant-numeric: tabular-nums; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
+.rc-text h3 { font-family: var(--serif); font-size: 1.35rem; font-weight: 700; margin-bottom: 8px; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.5); transition: color .3s var(--ease); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.records-card:hover .rc-text h3 { color: var(--accent-2); }
+.rc-text p { font-size: .85rem; color: rgba(255,255,255,.82); font-weight: 500; line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
+@media (max-width: 768px) { .records-card { min-height: 200px; } .rc-text { padding: 18px 20px; } }
 </style>
