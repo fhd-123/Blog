@@ -1,9 +1,18 @@
 <template>
   <div class="app-root">
     <div class="cursor-dot" ref="cursor"></div>
+
+    <!-- 参照站 layout.tsx 的全局背景层：流动渐变 + 两枚模糊光晕 -->
+    <div class="bg-stack" aria-hidden="true">
+      <div class="bg-veil"></div>
+      <div class="bg-gradient"></div>
+      <div class="bg-orb bg-orb-tl"></div>
+      <div class="bg-orb bg-orb-br"></div>
+    </div>
+
     <canvas v-if="isDark" class="fireflies" ref="fireflies"></canvas>
-    <ClickEffect v-if="!isAdmin" />
-    <DanmakuBackground v-if="!isAdmin" />
+    <ClickEffect v-if="!isAdmin && !isMobile" />
+    <DanmakuBackground v-if="!isAdmin && !isMobile" />
 
       <!-- ① PC 端：水平导航（隐藏时整体上移） -->
       <div class="app-navbar pc-only" :class="{ hide: navHidden }">
@@ -109,6 +118,9 @@ import DanmakuBackground from './components/DanmakuBackground.vue'
 const route = useRoute()
 const isAdmin = computed(() => route.path.startsWith('/admin'))
 const isHome = computed(() => route.path === '/')
+// 参照站：重负载特效（粒子/弹幕/流萤）仅在桌面端渲染，手机端跳过以省电省算力
+const isMobile = ref(false)
+const syncViewport = () => { isMobile.value = window.innerWidth < 768 }
 
 const { state: playerState, toggle: playerToggle, next: playerNext, prev: playerPrev, init: playerInit, current: playerCurrent } = usePlayer()
 const current = computed(() => playerCurrent())
@@ -277,11 +289,13 @@ onMounted(() => {
   const t = localStorage.getItem('theme') || 'dark'
   document.documentElement.setAttribute('data-theme', t)
   syncThemeIcon()
+  syncViewport()
   window.addEventListener('scroll', onScroll, { passive: true })
   if (window.matchMedia('(pointer:fine)').matches) {
     window.addEventListener('mousemove', onMove)
   }
   window.addEventListener('resize', onScroll)
+  window.addEventListener('resize', syncViewport)
   tick(); timer = setInterval(tick, 1000)
   getProfile().then(p => {
     brand.value = p.resume_name || ''
@@ -297,6 +311,7 @@ onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
   window.removeEventListener('mousemove', onMove)
   window.removeEventListener('resize', onScroll)
+  window.removeEventListener('resize', syncViewport)
   if (timer) clearInterval(timer)
   if (ffRaf) cancelAnimationFrame(ffRaf)
 })
@@ -304,6 +319,24 @@ onUnmounted(() => {
 
 <style>
 .app-root { min-height: 100vh; position: relative; z-index: 1; }
+
+/* ========== 全局背景层（对齐参照站 layout.tsx） ========== */
+.bg-stack { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.bg-veil { position: absolute; inset: 0; z-index: -9; background: color-mix(in srgb, var(--bg-elev) 30%, transparent); backdrop-filter: blur(12px); transition: background .6s var(--ease); }
+.bg-gradient {
+  position: absolute; inset: 0; z-index: -8; opacity: .5;
+  background: linear-gradient(-45deg, var(--accent), var(--accent-2), var(--gem-sky), var(--gem-violet));
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+  mix-blend-mode: color;
+}
+[data-theme="dark"] .bg-gradient { opacity: .22; }
+@keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+.bg-orb { position: absolute; width: 40%; height: 40%; border-radius: 50%; filter: blur(100px); z-index: -7; }
+.bg-orb-tl { top: -10%; left: -10%; background: color-mix(in srgb, var(--gem-sky) 35%, transparent); }
+.bg-orb-br { bottom: -10%; right: -10%; background: color-mix(in srgb, var(--accent-2) 40%, transparent); }
+@media (max-width: 768px) { .bg-gradient { opacity: .3; } .bg-orb { filter: blur(70px); } }
+@media (prefers-reduced-motion: reduce) { .bg-gradient { animation: none; } }
 
 /* ========== 手机端触发条 + 圆盘菜单 ========== */
 .mobile-trigger { display: none; }
@@ -376,5 +409,6 @@ onUnmounted(() => {
 .fireflies { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
 /* 悬浮音乐播放器（首页隐藏） */
-@media (max-width: 768px) { .floating-player { right: 16px; bottom: 16px; left: auto; padding: 6px 12px 6px 6px; } .floating-player .fp-info { width: 92px; } }
+/* 参照站：悬浮播放器在手机端隐藏（内部 rescale 到右下小尺寸） */
+@media (max-width: 768px) { .floating-player { right: 12px; bottom: 74px; left: auto; padding: 5px 10px 5px 5px; } .floating-player .fp-info { width: 84px; } .floating-player .fp-disc { width: 34px; height: 34px; font-size: .9rem; } }
 </style>
