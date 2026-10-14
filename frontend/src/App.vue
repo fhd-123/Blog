@@ -78,13 +78,13 @@
     <footer v-if="!isAdmin" class="footer">
       <div class="footer-deco">🌸 ✦ 🐟 ✨ 🌟</div>
       <p class="uptime">本站已稳定运行：<b>{{ uptimeText }}</b></p>
-      <div class="marquee"><div>
-        <span>收集值得收藏的微光</span><span>·</span><span>Spring Boot</span><span>·</span><span>Vue3</span><span>·</span><span>MySQL</span><span>·</span><span>Redis</span><span>·</span><span>全栈实践</span><span>·</span>
-        <span>收集值得收藏的微光</span><span>·</span><span>Spring Boot</span><span>·</span><span>Vue3</span><span>·</span><span>MySQL</span><span>·</span><span>Redis</span><span>·</span><span>全栈实践</span><span>·</span>
+      <div class="marquee" v-if="marqueeWords.length"><div>
+        <template v-for="(w, i) in [...marqueeWords, ...marqueeWords]" :key="i">
+          <span>{{ w }}</span><span>·</span>
+        </template>
       </div></div>
       <div class="tech-badges">
-        <span>Spring Boot</span><span>Vue3</span><span>Element Plus</span>
-        <span>MySQL</span><span>MyBatis-Plus</span><span>前后端分离</span>
+        <span v-for="t in techBadges" :key="t">{{ t }}</span>
       </div>
       <p>© 2026 {{ brand || '傅浩东' }} · {{ footerTag || '傅浩东の代码宝藏' }}</p>
       <p class="footer-sub">{{ slogan || '在代码与系统之间，收集值得收藏的微光' }} · <router-link to="/friends">交换友链 ✉</router-link></p>
@@ -132,6 +132,21 @@ const brand = ref('')
 const footerTag = ref('')
 const slogan = ref('')
 const siteSuffix = ref('代码宝藏')
+
+// 页脚跑马灯 / 技术栈：优先后端 site_profile（JSON 数组或逗号分隔文本），失败用兜底
+const marqueeWords = ref([])
+const techBadges = ref([])
+const parseList = (raw, fallback) => {
+  try {
+    let arr = []
+    if (Array.isArray(raw)) arr = raw
+    else if (typeof raw === 'string' && raw.trim()) {
+      const t = raw.trim()
+      arr = t.startsWith('[') ? JSON.parse(t) : t.split(/[,，]/).map(s => s.trim()).filter(Boolean)
+    }
+    return arr.length ? arr : fallback
+  } catch (e) { return fallback }
+}
 
 const showBackTop = ref(false)
 const navHidden = ref(false)
@@ -301,6 +316,9 @@ onMounted(() => {
     brand.value = p.resume_name || ''
     footerTag.value = p.site_name || ''
     slogan.value = p.slogan || ''
+    // 跑马灯与页脚技术栈均由后端 site_profile 驱动，避免前端写死
+    marqueeWords.value = parseList(p.footer_marquee, ['收集值得收藏的微光', 'Spring Boot', 'Vue3', 'MySQL', 'Redis', '全栈实践'])
+    techBadges.value = parseList(p.footer_badges, ['Spring Boot', 'Vue3', 'Element Plus', 'MySQL', 'MyBatis-Plus', '前后端分离'])
   }).catch(() => {})
   playerInit().catch(() => {})
   if (isDark.value && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {

@@ -150,8 +150,7 @@
             <div class="dash-item"><div class="dash-num">{{ stats.commentCount || 0 }}</div><div class="dash-label">评论</div></div>
           </div>
           <div class="tech-badges" style="margin-top:16px;">
-            <span>Spring Boot</span><span>Vue 3</span><span>Element Plus</span>
-            <span>MySQL</span><span>MyBatis-Plus</span><span>前后端分离</span>
+            <span v-for="t in techBadges" :key="t">{{ t }}</span>
           </div>
         </div>
       </div>
@@ -206,6 +205,20 @@ const coverStyle = (a) => (a.coverUrl && !coverFail.value[a.id])
 const essayCover = (c) => (c.coverUrl && !coverFail.value['e' + c.id])
   ? {}
   : { background: 'linear-gradient(135deg, var(--gem-violet), var(--accent))' }
+
+// 技术栈徽章由后端 site_profile.footer_badges 驱动
+const techBadges = ref([])
+const parseList = (raw, fallback) => {
+  try {
+    let arr = []
+    if (Array.isArray(raw)) arr = raw
+    else if (typeof raw === 'string' && raw.trim()) {
+      const t = raw.trim()
+      arr = t.startsWith('[') ? JSON.parse(t) : t.split(/[,，]/).map(s => s.trim()).filter(Boolean)
+    }
+    return arr.length ? arr : fallback
+  } catch (e) { return fallback }
+}
 const github = 'https://github.com/fhd-123'
 // 照片墙海报：优先使用首张照片的真实图片，其次回退渐变（对齐参照站的首图海报）
 const posterStyle = computed(() => {
@@ -235,6 +248,7 @@ onMounted(async () => {
       getLatestArticles(6).catch(() => []), getPhotos().catch(() => []), getEssays().catch(() => [])
     ])
     profile.value = p
+    techBadges.value = parseList(p?.footer_badges, ['Spring Boot', 'Vue 3', 'Element Plus', 'MySQL', 'MyBatis-Plus', '前后端分离'])
     stats.value = s
     latest.value = l
     photos.value = ph
