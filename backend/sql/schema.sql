@@ -179,7 +179,8 @@ INSERT INTO site_profile (`key`, `value`) VALUES
 ('resume_highlights', '毕业设计家庭健康平台 / 江服快跑商业项目 / 芒果记账 / 全国大学生软件创新大赛'),
 ('about_skills', '[{"t":"Java 后端与框架","d":"扎实 Java SE 基础；精通 Spring、SpringMVC、SpringBoot，熟练 MyBatis / MyBatis-Plus；理解 IOC、AOP 核心原理。","tags":["Java SE","Spring Boot","MyBatis-Plus","IOC/AOP"]},{"t":"数据库与存储","d":"熟练 MySQL，掌握索引设计、慢 SQL 排查与优化；熟练 Redis 缓存与过期策略。","tags":["MySQL","Redis","索引优化","SQL 调优"]},{"t":"安全与接口","d":"掌握 JWT 令牌鉴权，了解 SpringSecurity 权限控制；熟悉接口开发与统一异常处理；熟练 Maven、Git。","tags":["JWT","SpringSecurity","Maven","Git"]},{"t":"前端（辅助）","d":"了解 Vue3、Element-Plus、Vant 组件库，能够看懂前端接口需求，高效完成前后端联调。","tags":["Vue3","Element-Plus","Vant","联调"]}]'),
 ('about_projects', '[{"title":"江西思诚科技 · Java 开发实习生","time":"2025.06 - 2025.07","role":"江服快跑 校园跑腿小程序","points":["独立承担订单、用户、配送员模块后端接口开发，处理并发与数据一致性。","基于 SpringBoot + MyBatis-Plus 落地订单全套接口；通过联合索引优化高频慢 SQL。","用 Spring 声明式事务保障多表原子性；高频数据接 Redis 缓存。"]},{"title":"家庭健康协同管理平台","time":"2025.09 - 2025.12","role":"个人毕业设计 · 独立后端开发","points":["基于微信小程序的家庭健康管理：健康指标录入、用药提醒、异常预警与统计看板。","实现手机号注册登录、JWT 鉴权；家庭创建、成员邀请与权限隔离。","开发各类健康记录 CRUD，封装健康阈值检测逻辑；统一异常处理与参数校验。"]},{"title":"芒果记账","time":"2024.06 - 2024.09","role":"后端开发 · 账单与统计模块","points":["账单 CRUD，基于 QueryWrapper 封装动态多条件查询（时间/类型/金额）。","对筛选字段建立复合索引，复杂查询平均耗时由 120ms 降至 80ms，性能提升约 30%。","编写 GROUP BY 多维统计 SQL 支撑趋势图表与月报；DB 计算 + Redis 过期缓存。"]}]'),
-('about_education', '[{"title":"江西服装学院","desc":"本科 · 软件工程 · 2022 - 2026","tags":["蓝桥杯省赛三等奖","校级润华奖程序设计赛二等奖","校级微电影大赛一等奖"]}]');
+('about_education', '[{"title":"江西服装学院","desc":"本科 · 软件工程 · 2022 - 2026","tags":["蓝桥杯省赛三等奖","校级润华奖程序设计赛二等奖","校级微电影大赛一等奖"]}]'),
+('danmaku_list', '["保持热爱，奔赴山海","在代码里收集宝藏","愿每一次提交都有回响","慢一点，也没关系","今天也要好好写代码","万物皆有裂痕，那是光照进来的地方","祝大家少些 Bug，多点 Star","星光不问赶路人"]');
 
 -- 项目（项目矩阵）
 DROP TABLE IF EXISTS project;

@@ -2,6 +2,8 @@
   <div class="app-root">
     <div class="cursor-dot" ref="cursor"></div>
     <canvas v-if="isDark" class="fireflies" ref="fireflies"></canvas>
+    <ClickEffect v-if="!isAdmin" />
+    <DanmakuBackground v-if="!isAdmin" />
 
       <!-- ① PC 端：水平导航（隐藏时整体上移） -->
       <div class="app-navbar pc-only" :class="{ hide: navHidden }">
@@ -101,6 +103,8 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getProfile } from './api/blog'
 import { usePlayer } from './composables/player'
+import ClickEffect from './components/ClickEffect.vue'
+import DanmakuBackground from './components/DanmakuBackground.vue'
 
 const route = useRoute()
 const isAdmin = computed(() => route.path.startsWith('/admin'))
