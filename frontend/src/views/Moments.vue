@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="archive-hero">
+      <router-link to="/" class="back-link">← 返回上一级</router-link>
       <span class="eyebrow">Moments · 说说</span>
       <h1>说说</h1>
       <p>随手记下的此刻。</p>

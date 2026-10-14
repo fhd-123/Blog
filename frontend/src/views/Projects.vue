@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="projects-hero">
+      <router-link to="/" class="back-link">← 返回上一级</router-link>
       <span class="eyebrow">Projects · 项目矩阵</span>
       <h1>Projects Matrix</h1>
       <p>开源项目、毕设与课程实践的技术折腾记录。</p>

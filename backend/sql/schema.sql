@@ -231,17 +231,18 @@ CREATE TABLE music (
     artist VARCHAR(120) DEFAULT '',
     emoji VARCHAR(20) DEFAULT '🎧',
     mood VARCHAR(60) DEFAULT '',
+    url VARCHAR(500) DEFAULT '',
     sort INT DEFAULT 0,
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO music (name, artist, emoji, mood, sort) VALUES
-('夜的第七章', '周杰伦', '🎧', '深夜 Coding', 1),
-('Ref:rain', 'Aimer', '🌊', '专注', 2),
-('群青', 'YOASOBI', '✨', '灵感', 3),
-('Lemon', '米津玄师', '🍃', '沉淀', 4),
-('deity', 'BABYMETAL', '🔥', '提神', 5),
-('海阔天空', 'Beyond', '🌙', '怀旧', 6);
+INSERT INTO music (name, artist, emoji, mood, url, sort) VALUES
+('夜的第七章', '周杰伦', '🎧', '深夜 Coding', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', 1),
+('Ref:rain', 'Aimer', '🌊', '专注', '', 2),
+('群青', 'YOASOBI', '✨', '灵感', '', 3),
+('Lemon', '米津玄师', '🍃', '沉淀', '', 4),
+('deity', 'BABYMETAL', '🔥', '提神', '', 5),
+('海阔天空', 'Beyond', '🌙', '怀旧', '', 6);
 
 -- 灵境（知识树）
 DROP TABLE IF EXISTS thought_tree;

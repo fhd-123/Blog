@@ -175,6 +175,8 @@ public class AdminController {
         map.put("articleCount", articleService.count());
         map.put("commentCount", commentService.count());
         map.put("friendCount", friendLinkService.count());
+        map.put("photoCount", photoService.count());
+        map.put("chatterCount", essayService.count());
         return Result.success(map);
     }
 

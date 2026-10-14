@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="archive-hero">
+      <router-link to="/" class="back-link">← 返回上一级</router-link>
       <span class="eyebrow">Archive · 中枢链路矩阵</span>
       <h1>归档与探索</h1>
       <p>总计 {{ total }} 篇技术记录</p>

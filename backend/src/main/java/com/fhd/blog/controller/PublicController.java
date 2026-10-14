@@ -99,6 +99,8 @@ public class PublicController {
         map.put("tagCount", tagService.count());
         map.put("friendCount", friendLinkService.count());
         map.put("commentCount", commentService.count());
+        map.put("photoCount", photoService.count());
+        map.put("chatterCount", essayService.count());
         return Result.success(map);
     }
 

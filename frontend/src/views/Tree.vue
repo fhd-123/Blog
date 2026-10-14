@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="archive-hero">
+      <router-link to="/" class="back-link">← 返回上一级</router-link>
       <span class="eyebrow">Tree · 灵境</span>
       <h1>灵境</h1>
       <p>一些零散的想法，长成了树。</p>

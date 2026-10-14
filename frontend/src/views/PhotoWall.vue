@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="archive-hero">
+      <router-link to="/" class="back-link">← 返回上一级</router-link>
       <span class="eyebrow">Photowall · 照片墙</span>
       <h1>照片墙</h1>
       <p>把值得收藏的光影，收进同一面墙。</p>

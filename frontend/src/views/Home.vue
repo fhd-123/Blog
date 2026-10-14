@@ -14,8 +14,8 @@
         </div>
         <div class="hero-stats reveal">
           <div class="stat"><span class="stat-num">{{ stats.articleCount || 0 }}</span><span class="stat-label">篇文章</span></div>
-          <div class="stat"><span class="stat-num">{{ stats.categoryCount || 0 }}</span><span class="stat-label">个分类</span></div>
-          <div class="stat"><span class="stat-num">{{ stats.tagCount || 0 }}</span><span class="stat-label">个标签</span></div>
+          <div class="stat"><span class="stat-num">{{ stats.chatterCount || 0 }}</span><span class="stat-label">杂谈</span></div>
+          <div class="stat"><span class="stat-num">{{ stats.photoCount || 0 }}</span><span class="stat-label">照片</span></div>
         </div>
       </div>
       <div class="scroll-hint"><span class="mouse"></span>SCROLL</div>

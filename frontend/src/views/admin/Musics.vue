@@ -10,6 +10,7 @@
       <el-table-column prop="name" label="歌名" />
       <el-table-column prop="artist" label="作者" width="160" />
       <el-table-column prop="mood" label="心情" width="160" />
+      <el-table-column prop="url" label="音频链接" show-overflow-tooltip />
       <el-table-column prop="sort" label="排序" width="80" />
       <el-table-column label="操作" width="160">
         <template #default="{ row }">
@@ -25,6 +26,7 @@
         <el-form-item label="歌名"><el-input v-model="form.name" /></el-form-item>
         <el-form-item label="作者"><el-input v-model="form.artist" /></el-form-item>
         <el-form-item label="心情"><el-input v-model="form.mood" /></el-form-item>
+        <el-form-item label="音频链接"><el-input v-model="form.url" placeholder="https://... .mp3（留空则仅展示）" /></el-form-item>
         <el-form-item label="排序"><el-input-number v-model="form.sort" :min="0" /></el-form-item>
       </el-form>
       <template #footer>
@@ -44,7 +46,7 @@ const list = ref([])
 const loading = ref(false)
 const visible = ref(false)
 const saving = ref(false)
-const form = reactive({ id: null, emoji: '🎧', name: '', artist: '', mood: '', sort: 0 })
+const form = reactive({ id: null, emoji: '🎧', name: '', artist: '', mood: '', url: '', sort: 0 })
 
 const load = async () => { loading.value = true; try { list.value = await adminGetMusics() } catch (e) {} finally { loading.value = false } }
 const open = (row) => {

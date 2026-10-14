@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="page-hero">
+      <router-link to="/" class="back-link">← 返回上一级</router-link>
       <span class="eyebrow">About · 关于我</span>
       <h1>{{ p.resume_name || '关于我' }}</h1>
       <p>{{ p.resume_title || '' }} · {{ p.slogan || '' }}</p>

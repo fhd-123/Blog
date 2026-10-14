@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="friends-hero">
+      <router-link to="/" class="back-link">← 返回上一级</router-link>
       <span class="eyebrow">Friends · 云端引力</span>
       <h1>云端引力</h1>
       <p>那些散落在赛博宇宙各处的有趣灵魂与神经节点。</p>

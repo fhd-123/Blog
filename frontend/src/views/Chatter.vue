@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="archive-hero">
+      <router-link to="/" class="back-link">← 返回上一级</router-link>
       <span class="eyebrow">Chatter · 杂谈</span>
       <h1>杂谈</h1>
       <p>技术之外，随手写的随笔。</p>
