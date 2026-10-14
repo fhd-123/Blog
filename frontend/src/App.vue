@@ -1,12 +1,13 @@
 <template>
   <div class="app-root">
-    <!-- 公共导航（后台不显示，后台有独立布局） -->
-    <header v-if="!isAdmin" class="app-navbar">
+    <div class="cursor-dot" ref="cursor"></div>
+
+    <header v-if="!isAdmin" class="app-navbar" :class="{ hide: navHidden }">
       <div class="nav-inner">
         <router-link to="/" class="brand">
           <span class="brand-mark">✦</span>{{ brand || '傅浩东' }}<span class="brand-dot">.</span>
         </router-link>
-        <nav class="nav-links" :class="{ open: menuOpen }">
+        <nav class="nav-links" :class="{ open: menuOpen }" @click="menuOpen = false">
           <router-link to="/">首页</router-link>
           <router-link to="/projects">项目</router-link>
           <router-link to="/archive">归档</router-link>
@@ -31,10 +32,13 @@
       </transition>
     </router-view>
 
-    <!-- 公共页脚 -->
     <footer v-if="!isAdmin" class="footer">
       <div class="footer-deco">🌸 ✦ 🐟 ✨ 🌟</div>
       <p class="uptime">本站已稳定运行：<b>{{ uptimeText }}</b></p>
+      <div class="marquee"><div>
+        <span>收集值得收藏的微光</span><span>·</span><span>Spring Boot</span><span>·</span><span>Vue3</span><span>·</span><span>MySQL</span><span>·</span><span>Redis</span><span>·</span><span>全栈实践</span><span>·</span>
+        <span>收集值得收藏的微光</span><span>·</span><span>Spring Boot</span><span>·</span><span>Vue3</span><span>·</span><span>MySQL</span><span>·</span><span>Redis</span><span>·</span><span>全栈实践</span><span>·</span>
+      </div></div>
       <div class="tech-badges">
         <span>Spring Boot</span><span>Vue3</span><span>Element Plus</span>
         <span>MySQL</span><span>MyBatis-Plus</span><span>前后端分离</span>
@@ -61,6 +65,8 @@ const slogan = ref('')
 
 const menuOpen = ref(false)
 const showBackTop = ref(false)
+const navHidden = ref(false)
+let lastY = 0
 
 const themeIcon = ref('☀️')
 const syncThemeIcon = () => {
@@ -74,8 +80,22 @@ const toggleTheme = () => {
   syncThemeIcon()
 }
 
-const onScroll = () => { showBackTop.value = window.scrollY > 400 }
+const onScroll = () => {
+  const y = window.scrollY
+  showBackTop.value = y > 400
+  if (y > lastY && y > 240 && !menuOpen.value) navHidden.value = true
+  else navHidden.value = false
+  lastY = y
+}
 const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+
+// 自定义光标（仅精确指针设备）
+const cursor = ref(null)
+const onMove = (e) => {
+  if (cursor.value) {
+    cursor.value.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`
+  }
+}
 
 // 运行时计数
 const LAUNCH = new Date('2026-03-01T00:00:00')
@@ -94,7 +114,11 @@ onMounted(() => {
   const t = localStorage.getItem('theme') || 'dark'
   document.documentElement.setAttribute('data-theme', t)
   syncThemeIcon()
-  window.addEventListener('scroll', onScroll)
+  window.addEventListener('scroll', onScroll, { passive: true })
+  if (window.matchMedia('(pointer:fine)').matches) {
+    window.addEventListener('mousemove', onMove)
+  }
+  window.addEventListener('resize', onScroll)
   tick(); timer = setInterval(tick, 1000)
   getProfile().then(p => {
     brand.value = p.resume_name || ''
@@ -104,19 +128,25 @@ onMounted(() => {
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('mousemove', onMove)
+  window.removeEventListener('resize', onScroll)
   if (timer) clearInterval(timer)
 })
 </script>
 
 <style>
-.app-root { min-height: 100vh; }
-
-/* 路由切换：柔和淡入上滑，out-in 避免叠影 */
-.page-enter-active,
-.page-leave-active {
-  transition: opacity .35s cubic-bezier(.22, .61, .36, 1),
-              transform .35s cubic-bezier(.22, .61, .36, 1);
+.app-root { min-height: 100vh; position: relative; z-index: 1; }
+.cursor-dot {
+  position: fixed; top: 0; left: 0; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--accent); pointer-events: none; z-index: 9999; mix-blend-mode: difference;
+  transform: translate(-50%, -50%); transition: width .2s, height .2s, opacity .2s;
+  opacity: 0;
 }
-.page-enter-from { opacity: 0; transform: translateY(18px); }
-.page-leave-to { opacity: 0; transform: translateY(-12px); }
+@media (pointer: fine) { .cursor-dot { opacity: .85; } }
+@media (hover: none) { .cursor-dot { display: none; } }
+
+/* 路由切换 */
+.page-enter-active, .page-leave-active { transition: opacity .35s var(--ease), transform .35s var(--ease); }
+.page-enter-from { opacity: 0; transform: translateY(20px); }
+.page-leave-to { opacity: 0; transform: translateY(-14px); }
 </style>

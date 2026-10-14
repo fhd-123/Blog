@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <div v-if="article">
-      <router-link to="/archive" class="widget-link">← 返回文章列表</router-link>
-      <article class="article-detail">
-        <span class="post-cat">{{ article.categoryName || '未分类' }}</span>
+      <router-link to="/archive" class="widget-link back">← 返回文章列表</router-link>
+      <article class="article-detail reveal">
+        <span class="eyebrow">{{ article.categoryName || '未分类' }}</span>
         <h1>{{ article.title }}</h1>
         <div class="article-meta">
           {{ formatDate(article.createTime) }} · 阅读 {{ article.views }}

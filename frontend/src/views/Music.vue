@@ -1,12 +1,13 @@
 <template>
   <div class="app-container">
     <div class="archive-hero">
+      <span class="eyebrow">Music · 音乐</span>
       <h1>音乐</h1>
       <p>写代码时循环的那几首。</p>
     </div>
 
     <div class="music-list" v-loading="loading">
-      <div class="music-row" v-for="(m, i) in songs" :key="m.id">
+      <div class="music-row reveal" v-for="(m, i) in songs" :key="m.id">
         <span class="music-idx">{{ String(i + 1).padStart(2, '0') }}</span>
         <span class="music-emoji">{{ m.emoji || '🎧' }}</span>
         <div class="music-meta">
@@ -23,7 +24,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { getMusics } from '../api/blog'
+import { useReveal } from '../composables/useReveal'
 
+useReveal()
 const songs = ref([])
 const loading = ref(false)
 onMounted(async () => { loading.value = true; try { songs.value = await getMusics() } catch (e) {} finally { loading.value = false } })

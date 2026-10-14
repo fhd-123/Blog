@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="archive-hero">
+      <span class="eyebrow">Archive · 中枢链路矩阵</span>
       <h1>归档与探索</h1>
       <p>总计 {{ total }} 篇技术记录</p>
     </div>
@@ -24,7 +25,7 @@
     <el-skeleton :loading="loading" :rows="6" animated>
       <div>
         <div class="archive-grid">
-          <router-link v-for="a in list" :key="a.id" :to="'/articles/' + a.id" class="archive-card">
+          <router-link v-for="a in list" :key="a.id" :to="'/articles/' + a.id" class="archive-card reveal" @mousemove="spot">
             <div class="archive-cover">{{ a.title.charAt(0) }}</div>
             <div class="archive-body">
               <div class="archive-date">{{ formatDate(a.createTime) }} · {{ a.categoryName || '未分类' }}</div>
@@ -46,7 +47,9 @@
 import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticles, getTags, getCategories } from '../api/blog'
+import { useReveal } from '../composables/useReveal'
 
+useReveal()
 const route = useRoute()
 const list = ref([])
 const total = ref(0)
@@ -59,6 +62,7 @@ const activeTag = ref(route.query.tag || null)
 const activeCat = ref(route.query.category || null)
 
 const formatDate = (d) => (d ? d.slice(0, 10) : '')
+const spot = (e) => { const el = e.currentTarget; const r = el.getBoundingClientRect(); el.style.setProperty('--mx', `${e.clientX - r.left}px`); el.style.setProperty('--my', `${e.clientY - r.top}px`) }
 const setTag = (name) => { activeTag.value = name; page.value = 1; load() }
 const setCat = (name) => { activeCat.value = name; page.value = 1; load() }
 
