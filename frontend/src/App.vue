@@ -6,9 +6,9 @@
     <header v-if="!isAdmin" class="app-navbar" :class="{ hide: navHidden }">
       <div class="nav-inner">
         <router-link to="/" class="brand">
-          <span class="brand-mark">✦</span>{{ brand || '傅浩东' }}<span class="brand-dot">.</span>
+          <span class="brand-mark">✦</span>{{ brand || '傅浩东' }}<span class="brand-dot">の</span>{{ siteSuffix || '代码宝藏' }}
         </router-link>
-        <nav class="nav-links" :class="{ open: menuOpen }" @click="menuOpen = false">
+        <nav class="nav-links nav-center" :class="{ open: menuOpen }" @click="menuOpen = false">
           <router-link to="/">首页</router-link>
           <router-link to="/projects">项目</router-link>
           <router-link to="/archive">归档</router-link>
@@ -51,20 +51,16 @@
     <button class="back-top" :class="{ show: showBackTop }" @click="scrollTop" aria-label="回到顶部">↑</button>
 
     <!-- 全局悬浮音乐播放器 -->
-    <div v-if="!isAdmin && playerState.list.length" class="music-player" :class="{ playing: playerState.playing }">
-      <button class="mp-toggle" @click="onToggle" :aria-label="playerState.playing ? '暂停' : '播放'">
-        <span class="mp-disc">{{ current.emoji || '🎧' }}</span>
-      </button>
-      <div class="mp-info">
-        <div class="mp-name">{{ current.name || '未选择' }}</div>
-        <div class="mp-artist">{{ current.artist || '' }}</div>
-        <div class="mp-bar"><span :style="{ width: playerState.playing ? '100%' : '0%' }"></span></div>
+    <div v-if="!isAdmin && playerState.list.length" class="floating-player" :class="{ playing: playerState.playing, hidden: isHome }">
+      <div class="fp-disc" @click="onToggle" role="button" :aria-label="playerState.playing ? '暂停' : '播放'">{{ current.emoji || '🎧' }}</div>
+      <div class="fp-info">
+        <div class="fp-name">{{ current.name || '未选择' }}</div>
+        <div class="fp-lyric">{{ current.mood || current.artist || '♪' }}</div>
       </div>
-      <div class="mp-ctrl">
-        <button @click="onPrev" aria-label="上一首">⏮</button>
-        <button @click="onNext" aria-label="下一首">⏭</button>
+      <div class="fp-ctrl">
+        <button @click="onToggle" aria-label="播放/暂停">{{ playerState.playing ? '⏸' : '▶' }}</button>
+        <button class="fp-next" @click="onNext" aria-label="下一首">⏭</button>
       </div>
-      <span class="mp-note" v-if="!current.url">♪ 静态展示</span>
     </div>
   </div>
 </template>
@@ -77,6 +73,7 @@ import { usePlayer } from './composables/player'
 
 const route = useRoute()
 const isAdmin = computed(() => route.path.startsWith('/admin'))
+const isHome = computed(() => route.path === '/')
 
 const { state: playerState, toggle: playerToggle, next: playerNext, prev: playerPrev, init: playerInit, current: playerCurrent } = usePlayer()
 const current = computed(() => playerCurrent())
@@ -87,6 +84,7 @@ const onPrev = () => playerPrev()
 const brand = ref('')
 const footerTag = ref('')
 const slogan = ref('')
+const siteSuffix = ref('代码宝藏')
 
 const menuOpen = ref(false)
 const showBackTop = ref(false)
@@ -150,8 +148,8 @@ const drawFireflies = () => {
       if (s.x < 0) s.x = w; if (s.x > w) s.x = 0
       if (s.y < 0) s.y = h; if (s.y > h) s.y = 0
       ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
-      ctx.fillStyle = `rgba(232,196,106,${(s.a * 0.9).toFixed(2)})`
-      ctx.shadowBlur = 8; ctx.shadowColor = 'rgba(232,196,106,0.8)'
+      ctx.fillStyle = `rgba(200,255,200,${(s.a * 0.9).toFixed(2)})`
+      ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(100,255,150,0.8)'
       ctx.fill(); ctx.shadowBlur = 0
     })
     ffRaf = requestAnimationFrame(loop)
@@ -226,29 +224,6 @@ onUnmounted(() => {
 /* 夜间流萤 */
 .fireflies { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
-/* 悬浮音乐播放器 */
-.music-player {
-  position: fixed; right: 24px; bottom: 24px; z-index: 95; display: flex; align-items: center; gap: 12px;
-  padding: 10px 16px 10px 10px; border-radius: 18px; max-width: 340px;
-  background: color-mix(in srgb, var(--bg-elev) 78%, transparent); border: 1px solid var(--border);
-  backdrop-filter: blur(14px) saturate(140%); box-shadow: var(--shadow);
-  transition: transform .35s var(--ease), box-shadow .35s var(--ease), opacity .35s var(--ease);
-  animation: cardIn .5s var(--ease) both;
-}
-.music-player:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
-.mp-toggle { width: 46px; height: 46px; border-radius: 50%; border: none; cursor: pointer; flex-shrink: 0; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px var(--accent-soft); }
-.mp-disc { font-size: 1.3rem; display: inline-block; }
-.music-player.playing .mp-disc { animation: spin 4s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.mp-info { min-width: 0; flex: 1; }
-.mp-name { font-weight: 700; font-family: var(--serif); font-size: .96rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mp-artist { font-size: .78rem; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mp-bar { height: 3px; border-radius: 3px; background: var(--bg-soft); margin-top: 6px; overflow: hidden; }
-.mp-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 3.2s linear; }
-.mp-ctrl { display: flex; gap: 6px; flex-shrink: 0; }
-.mp-ctrl button { width: 30px; height: 30px; border-radius: 9px; border: 1px solid var(--border); background: var(--bg-soft); color: var(--text); cursor: pointer; font-size: .8rem; transition: transform .2s var(--ease), color .2s var(--ease); }
-.mp-ctrl button:hover { transform: translateY(-2px); color: var(--accent); }
-.mp-note { position: absolute; top: -9px; right: 12px; font-size: .64rem; color: var(--accent); background: var(--bg-elev); padding: 0 6px; border-radius: 8px; }
-@media (max-width: 768px) { .music-player { left: 16px; right: 16px; bottom: 16px; max-width: none; } }
-@media (prefers-reduced-motion: reduce) { .music-player.playing .mp-disc { animation: none; } .mp-bar span { transition: none; } }
+/* 悬浮音乐播放器（首页隐藏） */
+@media (max-width: 768px) { .floating-player { right: 16px; bottom: 16px; left: auto; padding: 6px 12px 6px 6px; } .floating-player .fp-info { width: 92px; } }
 </style>

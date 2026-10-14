@@ -1,143 +1,220 @@
 <template>
-  <div>
-    <section class="hero">
-      <canvas ref="canvas" class="hero-canvas"></canvas>
-      <div class="hero-glow"></div>
-      <div class="hero-content">
-        <div class="avatar reveal">{{ (profile.resume_name || '傅').charAt(0) }}</div>
-        <h1 class="hero-title reveal">{{ profile.site_name || '傅浩东の代码宝藏' }}</h1>
-        <p class="hero-sub reveal">{{ profile.slogan || 'Java 后端开发 · 全栈实践者' }}</p>
-        <p class="hero-desc reveal">这里存放我的后端开发实践、踩坑复盘与学习思考——关于 Spring、MySQL、Redis、安全与前后端协作的一切。</p>
-        <div class="hero-actions reveal">
-          <router-link to="/archive" class="btn-primary" ref="cta" @mousemove="magnet" @mouseleave="magnetLeave">翻阅宝藏文章</router-link>
-          <router-link to="/about" class="btn-ghost">关于我</router-link>
-        </div>
-        <div class="hero-stats reveal">
-          <div class="stat"><span class="stat-num">{{ stats.articleCount || 0 }}</span><span class="stat-label">篇文章</span></div>
-          <div class="stat"><span class="stat-num">{{ stats.chatterCount || 0 }}</span><span class="stat-label">杂谈</span></div>
-          <div class="stat"><span class="stat-num">{{ stats.photoCount || 0 }}</span><span class="stat-label">照片</span></div>
-        </div>
-      </div>
-      <div class="scroll-hint"><span class="mouse"></span>SCROLL</div>
-    </section>
-
-    <div class="app-container">
-      <div class="layout">
-        <div class="content">
-          <h2 class="section-title"><span class="title-bar"></span>Latest Insight · 最新文章</h2>
-          <div class="archive-grid">
-            <router-link v-for="a in latest" :key="a.id" :to="'/articles/' + a.id" class="archive-card" @mousemove="spotlight">
-              <div class="archive-cover">{{ a.title.charAt(0) }}</div>
-              <div class="archive-body">
-                <div class="archive-date"><span class="dot"></span>{{ formatDate(a.createTime) }} · {{ a.categoryName || '未分类' }}</div>
-                <h3>{{ a.title }}</h3>
-                <p style="color:var(--text-soft);font-size:.88rem;">{{ a.summary }}</p>
-                <div class="tags">
-                  <span v-for="t in a.tags" :key="t.id">{{ t.name }}</span>
-                </div>
-              </div>
-            </router-link>
-          </div>
-        </div>
-
-        <aside class="sidebar">
-          <div class="widget reveal">
-            <h3 class="widget-title">关于我</h3>
-            <p class="widget-text">{{ profile.about_intro || '傅浩东，Java 后端开发工程师，专注 Spring 生态与全栈实践。' }}</p>
-            <router-link to="/about" class="widget-link">查看完整简历 →</router-link>
-          </div>
-          <div class="widget reveal">
-            <h3 class="widget-title">分类</h3>
-            <ul class="cat-list">
-              <li v-for="c in categories" :key="c.id" @click="goCategory(c.name)">
-                <span class="name">{{ c.name }}</span><span class="count">{{ c.count }}</span>
-              </li>
-            </ul>
-          </div>
-          <div class="widget reveal">
-            <h3 class="widget-title">标签</h3>
-            <div class="tag-cloud">
-              <span v-for="t in tags" :key="t.id" @click="goTag(t.name)">{{ t.name }}</span>
+  <div class="home-wrap">
+    <div class="home-grid">
+      <!-- 第一行：个人信息 + 播放器 -->
+      <div class="col-7">
+        <div class="bento profile-card reveal" @click="go('/about')">
+          <div class="profile-top">
+            <div class="avatar-box">
+              <img v-if="profile.avatar_url" :src="profile.avatar_url" alt="avatar" />
+              <div v-else class="avatar-initial">{{ (profile.resume_name || '傅').charAt(0) }}</div>
+            </div>
+            <div>
+              <div class="profile-name">{{ profile.resume_name || '傅浩东' }}</div>
+              <div class="profile-bio">{{ profile.about_intro || '在代码与系统之间，收集值得收藏的微光。' }}</div>
             </div>
           </div>
-        </aside>
+          <div>
+            <div class="profile-stats">
+              <div class="stat-item"><div class="stat-num">{{ stats.articleCount || 0 }}</div><div class="stat-label">文章</div></div>
+              <div class="stat-divider"></div>
+              <div class="stat-item"><div class="stat-num">{{ stats.chatterCount || 0 }}</div><div class="stat-label">杂谈</div></div>
+              <div class="stat-divider"></div>
+              <div class="stat-item"><div class="stat-num">{{ stats.photoCount || 0 }}</div><div class="stat-label">照片</div></div>
+            </div>
+            <div class="social-row">
+              <a v-if="github" :href="github" target="_blank" rel="noopener" class="social-btn" @click.stop title="GitHub">⌨</a>
+              <a v-if="profile.contact_email" :href="'mailto:' + profile.contact_email" class="social-btn" @click.stop title="邮箱">✉</a>
+              <a v-if="profile.contact_wechat" class="social-btn" @click.stop title="微信">💬</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-5">
+        <div class="bento cloud-player reveal" :class="{ playing: playerState.playing }" @click="go('/music')">
+          <div v-if="!ready" class="cp-empty"><span class="spin"></span>CONNECTING…</div>
+          <template v-else-if="current.name">
+            <div class="cp-top">
+              <div class="cp-disc">{{ current.emoji || '🎧' }}</div>
+              <div>
+                <div class="cp-title">{{ current.name }}</div>
+                <div class="cp-artist">{{ current.artist }}</div>
+              </div>
+            </div>
+            <div class="cp-lyric">{{ current.mood || '♪ 此刻的 BGM' }}</div>
+            <div class="cp-bar"><span :style="{ width: playerState.playing ? '100%' : '0%' }"></span></div>
+            <div class="cp-ctrl" @click.stop>
+              <button @click="prev" aria-label="上一首">⏮</button>
+              <button @click="toggle" :aria-label="playerState.playing ? '暂停' : '播放'">{{ playerState.playing ? '⏸' : '▶' }}</button>
+              <button class="cp-mini" @click="next" aria-label="下一首">⏭</button>
+            </div>
+          </template>
+          <div v-else class="cp-empty">暂无音乐</div>
+        </div>
+      </div>
+
+      <!-- 歌词条 -->
+      <div class="col-12">
+        <div class="bento lyric-bar reveal">
+          <span class="lb-dot"></span>
+          <span class="lb-text">{{ current.mood ? ('♪ ' + current.name + ' — ' + current.mood) : '♪ 让声音成为代码的背景' }}</span>
+        </div>
+      </div>
+
+      <!-- 第二行：文章轮播 + 照片墙 + 说说 + 主题块 -->
+      <div class="col-4">
+        <div class="bento carousel-card reveal">
+          <div class="carousel-head"><h3>Latest Insight</h3><span style="font-size:.78rem;color:var(--text-soft);">{{ latest.length }} 篇</span></div>
+          <div class="carousel-body" @mouseenter="stopAuto" @mouseleave="startAuto">
+            <div v-for="(a, i) in latest" :key="a.id" class="slide" :class="{ active: i === idx }"
+                 @click="go('/articles/' + a.id)">
+              <div class="slide-inner">
+                <div class="slide-cover">{{ a.title.charAt(0) }}</div>
+                <div class="slide-meta">
+                  <div class="s-date">{{ formatDate(a.createTime) }}</div>
+                  <div class="s-title">{{ a.title }}</div>
+                  <div class="s-desc">{{ a.summary }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-dots">
+            <span v-for="(a, i) in latest" :key="a.id" :class="{ active: i === idx }" @click="idx = i"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-8">
+        <div class="home-right-col">
+          <router-link to="/photowall" class="bento photo-poster reveal">
+            <div class="pp-img" :style="posterStyle"></div>
+            <div class="pp-mask"></div>
+            <div class="pp-text">
+              <h3>照片墙</h3>
+              <p>{{ photos.length ? '定格那些值得回看的光影' : '查看摄影' }}</p>
+            </div>
+          </router-link>
+
+          <div class="home-right-grid">
+            <div class="bento carousel-card reveal">
+              <div class="carousel-head"><h3>Records</h3></div>
+              <div class="carousel-body" @mouseenter="stopAutoC" @mouseleave="startAutoC">
+                <div v-for="(c, i) in chatter" :key="c.id" class="slide" :class="{ active: i === idxC }" @click="go('/chatter')">
+                  <div class="slide-inner">
+                    <div class="slide-cover" style="width:90px;">📝</div>
+                    <div class="slide-meta">
+                      <div class="s-date">{{ c.date }}</div>
+                      <div class="s-title">{{ c.title }}</div>
+                      <div class="s-desc">{{ c.summary }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-dots">
+                <span v-for="(c, i) in chatter" :key="c.id" :class="{ active: i === idxC }" @click="idxC = i"></span>
+              </div>
+            </div>
+
+            <div class="bento theme-block reveal" @click="toggleTheme">
+              <div class="tb-icon">{{ themeIcon }}</div>
+              <div class="tb-label">{{ isDark ? '流萤飞舞的深空' : '日间模式' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 数据面板 -->
+      <div class="col-12">
+        <div class="bento dashboard reveal">
+          <div class="dash-item"><div class="dash-num">{{ stats.articleCount || 0 }}</div><div class="dash-label">文章</div></div>
+          <div class="dash-item"><div class="dash-num">{{ stats.categoryCount || 0 }}</div><div class="dash-label">分类</div></div>
+          <div class="dash-item"><div class="dash-num">{{ stats.tagCount || 0 }}</div><div class="dash-label">标签</div></div>
+          <div class="dash-item"><div class="dash-num">{{ stats.chatterCount || 0 }}</div><div class="dash-label">杂谈</div></div>
+          <div class="dash-item"><div class="dash-num">{{ stats.photoCount || 0 }}</div><div class="dash-label">照片</div></div>
+          <div class="dash-item"><div class="dash-num">{{ stats.friendCount || 0 }}</div><div class="dash-label">友链</div></div>
+          <div class="dash-item"><div class="dash-num">{{ stats.commentCount || 0 }}</div><div class="dash-label">评论</div></div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { getLatestArticles, getCategories, getTags, getStats, getProfile } from '../api/blog'
+import { getLatestArticles, getStats, getProfile, getPhotos, getEssays } from '../api/blog'
+import { useReveal } from '../composables/useReveal'
+import { usePlayer } from '../composables/player'
 
+useReveal()
 const router = useRouter()
-const latest = ref([])
-const categories = ref([])
-const tags = ref([])
-const stats = ref({})
+const go = (p) => router.push(p)
+
 const profile = ref({})
-const canvas = ref(null)
-let raf = null
+const stats = ref({})
+const latest = ref([])
+const photos = ref([])
+const chatter = ref([])
+
+const { state: playerState, toggle, next, prev, init, current: playerCurrent } = usePlayer()
+const current = computed(() => playerCurrent())
+const ready = ref(false)
+
+const themeIcon = ref('☀️')
+const isDark = ref(false)
+const syncTheme = () => {
+  const t = document.documentElement.getAttribute('data-theme')
+  themeIcon.value = t === 'dark' ? '☀️' : '🌙'
+  isDark.value = t === 'dark'
+}
+const toggleTheme = () => {
+  const next = isDark.value ? 'light' : 'dark'
+  document.documentElement.setAttribute('data-theme', next)
+  localStorage.setItem('theme', next)
+  syncTheme()
+}
 
 const formatDate = (d) => (d ? d.slice(0, 10) : '')
-const goCategory = (name) => router.push({ path: '/archive', query: { category: name } })
-const goTag = (name) => router.push({ path: '/archive', query: { tag: name } })
+const github = 'https://github.com/fhd-123'
+const posterStyle = computed(() => {
+  const p = photos.value[0]
+  return p ? { backgroundImage: p.gradient ? p.gradient : '' } : { background: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }
+})
 
-// 卡片光标聚光
-const spotlight = (e) => {
-  const el = e.currentTarget
-  const r = el.getBoundingClientRect()
-  el.style.setProperty('--mx', `${e.clientX - r.left}px`)
-  el.style.setProperty('--my', `${e.clientY - r.top}px`)
-}
-// 磁吸按钮
-const cta = ref(null)
-const magnet = (e) => {
-  const el = e.currentTarget
-  const r = el.getBoundingClientRect()
-  el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.25}px, ${(e.clientY - r.top - r.height / 2) * 0.35}px)`
-}
-const magnetLeave = (e) => { e.currentTarget.style.transform = '' }
-
-// 星空 canvas
-const drawStars = () => {
-  const cv = canvas.value
-  if (!cv) return
-  const ctx = cv.getContext('2d')
-  const dpr = window.devicePixelRatio || 1
-  const w = cv.clientWidth, h = cv.clientHeight
-  cv.width = w * dpr; cv.height = h * dpr
-  ctx.scale(dpr, dpr)
-  const stars = Array.from({ length: 80 }, () => ({
-    x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.6 + 0.4,
-    a: Math.random(), tw: Math.random() * 0.02 + 0.005, vy: Math.random() * 0.12 + 0.02
-  }))
-  let t = 0
-  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#e8c46a'
-  const loop = () => {
-    t += 1
-    ctx.clearRect(0, 0, w, h)
-    stars.forEach(s => {
-      s.a += s.tw; if (s.a > 1 || s.a < 0.1) s.tw *= -1
-      s.y += s.vy; if (s.y > h) s.y = 0
-      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
-      ctx.fillStyle = `rgba(232,196,106,${s.a.toFixed(2)})`
-      ctx.fill()
-    })
-    raf = requestAnimationFrame(loop)
-  }
-  loop()
-}
+// 文章轮播
+const idx = ref(0)
+let timer = null
+const startAuto = () => { stopAuto(); timer = setInterval(() => { if (latest.value.length) idx.value = (idx.value + 1) % latest.value.length }, 4000) }
+const stopAuto = () => { if (timer) clearInterval(timer) }
+// 杂谈轮播
+const idxC = ref(0)
+let timerC = null
+const startAutoC = () => { stopAutoC(); timerC = setInterval(() => { if (chatter.value.length) idxC.value = (idxC.value + 1) % chatter.value.length }, 4000) }
+const stopAutoC = () => { if (timerC) clearInterval(timerC) }
 
 onMounted(async () => {
+  syncTheme()
   try {
-    profile.value = await getProfile().catch(() => ({}))
-    ;[latest.value, categories.value, tags.value, stats.value] = await Promise.all([
-      getLatestArticles(8), getCategories(), getTags(), getStats()
+    const [p, s, l, ph, es] = await Promise.all([
+      getProfile().catch(() => ({})), getStats().catch(() => ({})),
+      getLatestArticles(6).catch(() => []), getPhotos().catch(() => []), getEssays().catch(() => [])
     ])
+    profile.value = p
+    stats.value = s
+    latest.value = l
+    photos.value = ph
+    chatter.value = es
   } catch (e) {}
-  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) drawStars()
+  init().then(() => { ready.value = true }).catch(() => { ready.value = true })
+  if (latest.value.length) startAuto()
+  if (chatter.value.length) startAutoC()
 })
-onUnmounted(() => { if (raf) cancelAnimationFrame(raf) })
+onUnmounted(() => { stopAuto(); stopAutoC() })
 </script>
+
+<style scoped>
+.home-right-col { display: flex; flex-direction: column; gap: 20px; }
+.home-right-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+@media (max-width: 920px) { .home-right-grid { grid-template-columns: 1fr; } }
+</style>
