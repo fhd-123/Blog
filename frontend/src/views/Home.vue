@@ -189,9 +189,13 @@ const toggleTheme = () => {
 
 const formatDate = (d) => (d ? d.slice(0, 10) : '')
 const github = 'https://github.com/fhd-123'
+// 照片墙海报：优先使用首张照片的真实图片，其次回退渐变（对齐参照站的首图海报）
 const posterStyle = computed(() => {
-  const p = photos.value[0]
-  return p ? { backgroundImage: p.gradient ? p.gradient : '' } : { background: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }
+  const p = photos.value.find(x => x.imageUrl) || photos.value[0]
+  if (!p) return { background: 'linear-gradient(135deg, var(--accent), var(--accent-2))' }
+  return p.imageUrl
+    ? { backgroundImage: `url("${p.imageUrl}")` }
+    : { background: p.gradient || 'linear-gradient(135deg, var(--accent), var(--accent-2))' }
 })
 
 // 文章轮播

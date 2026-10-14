@@ -14,6 +14,7 @@ public class Photo {
     private String date;
     private String emoji;
     private String gradient;
+    private String imageUrl;   // 真实图片地址；填写后优先于 emoji/gradient 展示
     private Integer sort;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;

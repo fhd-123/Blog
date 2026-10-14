@@ -210,19 +210,20 @@ CREATE TABLE photo (
     `date` VARCHAR(20) DEFAULT '',
     emoji VARCHAR(20) DEFAULT '🌄',
     gradient VARCHAR(120) DEFAULT '',
+    image_url VARCHAR(500) DEFAULT '',   -- 真实图片地址；填写后优先于 emoji/gradient 展示
     sort INT DEFAULT 0,
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO photo (caption, `date`, emoji, gradient, sort) VALUES
-('山脊线日落', '2026-02-14', '🌄', 'linear-gradient(135deg,#e8c46a,#8b5cf6)', 1),
+('山脊线日落', '2026-02-14', '🌄', 'linear-gradient(135deg,#6366f1,#8b5cf6)', 1),
 ('海边的风', '2026-01-30', '🌊', 'linear-gradient(135deg,#0ea5e9,#6366f1)', 2),
 ('夜色城市', '2026-01-12', '🏙️', 'linear-gradient(135deg,#f43f5e,#f59e0b)', 3),
 ('林间小径', '2025-12-25', '🌿', 'linear-gradient(135deg,#10b981,#0ea5e9)', 4),
 ('秋日校园', '2025-11-08', '🍂', 'linear-gradient(135deg,#f59e0b,#e0a93b)', 5),
 ('初雪清晨', '2025-12-01', '❄️', 'linear-gradient(135deg,#38bdf8,#a78bfa)', 6),
 ('赛博霓虹', '2026-02-02', '🌃', 'linear-gradient(135deg,#8b5cf6,#f43f5e)', 7),
-('星轨延时', '2026-02-20', '✨', 'linear-gradient(135deg,#e8c46a,#6366f1)', 8);
+('星轨延时', '2026-02-20', '✨', 'linear-gradient(135deg,#6366f1,#6366f1)', 8);
 
 -- 音乐
 DROP TABLE IF EXISTS music;
