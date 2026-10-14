@@ -11,7 +11,7 @@
       <div>
         <section class="section" style="margin-top:0;">
           <h2 class="section-title"><span class="title-bar"></span>个人简介</h2>
-          <p class="about-quote reveal">“在代码与系统之间，收集值得收藏的微光。”</p>
+          <p class="about-quote reveal">{{ p.slogan ? `“${p.slogan}”` : '' }}</p>
           <div class="widget reveal">
             <p>{{ p.about_intro || '暂无简介' }}</p>
             <ul class="cat-list" style="border:none;margin-top:14px;">
