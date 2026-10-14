@@ -87,7 +87,13 @@ a { color: var(--accent); text-decoration: none; }
   font-size: .92rem; transition: color .25s var(--ease), background .25s var(--ease); overflow: hidden;
 }
 .nav-links a:hover { color: var(--text); background: var(--accent-soft); }
-.nav-links a.router-link-active { color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 0 16px var(--accent-soft); }
+/* PC 端激活态：文字变强调色 + 下方呼吸小圆点（对齐参照站 Navbar） */
+.nav-links a.router-link-active { color: var(--accent); background: transparent; box-shadow: none; }
+.nav-links a.router-link-active::after {
+  content: ""; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: navDot 1.6s ease-in-out infinite;
+}
+@keyframes navDot { 0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); } 50% { opacity: .35; transform: translateX(-50%) scale(.7); } }
 .nav-right { display: flex; align-items: center; gap: 10px; }
 .theme-toggle, .menu-toggle {
   width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-soft);

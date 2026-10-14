@@ -3,29 +3,60 @@
     <div class="cursor-dot" ref="cursor"></div>
     <canvas v-if="isDark" class="fireflies" ref="fireflies"></canvas>
 
-    <header v-if="!isAdmin" class="app-navbar" :class="{ hide: navHidden }">
-      <div class="nav-inner">
-        <router-link to="/" class="brand">
-          <span class="brand-mark">✦</span>{{ brand || '傅浩东' }}<span class="brand-dot">の</span>{{ siteSuffix || '代码宝藏' }}
-        </router-link>
-        <nav class="nav-links nav-center" :class="{ open: menuOpen }" @click="menuOpen = false">
-          <router-link to="/">首页</router-link>
-          <router-link to="/projects">项目</router-link>
-          <router-link to="/timeline">归档</router-link>
-          <router-link to="/photowall">照片墙</router-link>
-          <router-link to="/music">音乐</router-link>
-          <router-link to="/tree">灵境</router-link>
-          <router-link to="/moments">说说</router-link>
-          <router-link to="/chatter">杂谈</router-link>
-          <router-link to="/friends">友链</router-link>
-          <router-link to="/about">关于</router-link>
-        </nav>
-        <div class="nav-right">
-          <button class="theme-toggle" @click="toggleTheme" aria-label="切换主题">{{ themeIcon }}</button>
-          <button class="menu-toggle" @click="menuOpen = !menuOpen" aria-label="菜单">☰</button>
+      <!-- ① PC 端：水平导航（隐藏时整体上移） -->
+      <div class="app-navbar pc-only" :class="{ hide: navHidden }">
+        <div class="nav-inner">
+          <router-link to="/" class="brand">
+            <span class="brand-mark">✦</span>{{ brand || '傅浩东' }}<span class="brand-dot">の</span>{{ siteSuffix || '代码宝藏' }}
+          </router-link>
+          <nav class="nav-links nav-center">
+            <router-link to="/">首页</router-link>
+            <router-link to="/projects">项目</router-link>
+            <router-link to="/timeline">归档</router-link>
+            <router-link to="/photowall">照片墙</router-link>
+            <router-link to="/music">音乐</router-link>
+            <router-link to="/tree">灵境</router-link>
+            <router-link to="/moments">说说</router-link>
+            <router-link to="/chatter">杂谈</router-link>
+            <router-link to="/friends">友链</router-link>
+            <router-link to="/about">关于</router-link>
+          </nav>
+          <div class="nav-right">
+            <button class="theme-toggle" @click="toggleTheme" aria-label="切换主题">{{ themeIcon }}</button>
+          </div>
         </div>
       </div>
-    </header>
+
+      <!-- ② 手机端：右侧可竖向拖拽的胶囊触发条 -->
+      <div class="mobile-trigger"
+           :class="{ 'is-hidden': wheelOpen }"
+           :style="{ transform: 'translateY(' + dragY + 'px)' }"
+           @pointerdown="startDrag" @pointermove="onDrag" @pointerup="endDrag"
+           @click="openWheel" role="button" aria-label="打开菜单">
+        <span></span><span></span><span></span>
+      </div>
+
+      <!-- ③ 手机端：圆盘转轴菜单 -->
+      <transition name="wheel">
+        <div v-if="wheelOpen" class="wheel-layer">
+          <div class="wheel-mask" @click="wheelOpen = false"></div>
+          <div class="wheel-wrap">
+            <div class="wheel" :style="{ transform: 'rotate(' + wheelRot + 'deg)' }"
+                 @pointerdown="startWheel" @pointermove="onWheel" @pointerup="endWheel">
+              <div class="wheel-hub">
+                <button @click="wheelOpen = false" aria-label="关闭">✕</button>
+              </div>
+              <div v-for="(link, i) in mobileLinks" :key="link.to" class="wheel-node"
+                   :style="nodeStyle(i)">
+                <router-link :to="link.to" :style="{ transform: 'rotate(' + (-wheelRot) + 'deg)' }"
+                             :class="{ active: isActive(link.to) }" @click="wheelOpen = false">
+                  {{ link.name }}
+                </router-link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
 
     <router-view v-slot="{ Component, route }">
       <transition name="page" mode="out-in">
@@ -86,10 +117,72 @@ const footerTag = ref('')
 const slogan = ref('')
 const siteSuffix = ref('代码宝藏')
 
-const menuOpen = ref(false)
 const showBackTop = ref(false)
 const navHidden = ref(false)
 let lastY = 0
+
+// ---- 手机端圆盘菜单 ----
+const wheelOpen = ref(false)
+const wheelRot = ref(0)
+const dragY = ref(0)
+
+// 参照站：手机端过滤掉「灵境」，保证圆盘均匀排布
+const allLinks = [
+  { name: '首页', to: '/' }, { name: '项目', to: '/projects' },
+  { name: '归档', to: '/timeline' }, { name: '照片墙', to: '/photowall' },
+  { name: '音乐', to: '/music' }, { name: '灵境', to: '/tree' },
+  { name: '说说', to: '/moments' }, { name: '杂谈', to: '/chatter' },
+  { name: '友链', to: '/friends' }, { name: '关于', to: '/about' }
+]
+const mobileLinks = allLinks.filter(l => l.to !== '/tree')
+const nodeStyle = (i) => {
+  const a = i * (360 / mobileLinks.length)
+  return { transform: `rotate(${a}deg) translateY(-115px) rotate(${-a}deg)` }
+}
+const isActive = (to) => route.path === to
+
+// 触发条竖向拖拽
+let dragStart = null
+let dragMoved = 0
+const clampY = (v) => {
+  const vh = window.innerHeight
+  return Math.max(-(vh / 2) + 80, Math.min(vh / 2 - 80, v))
+}
+const startDrag = (e) => { dragStart = e.clientY; dragMoved = 0 }
+const onDrag = (e) => {
+  if (dragStart == null) return
+  const d = e.clientY - dragStart
+  dragMoved = Math.abs(d)
+  dragY.value = clampY(d)
+}
+const endDrag = () => { dragStart = null }
+const openWheel = () => {
+  if (dragMoved > 10) return   // 拖动过就不当作点击
+  wheelRot.value = 0
+  wheelOpen.value = true
+}
+
+// 圆盘转动
+let wlCenter = null
+let wlPrevAngle = 0
+const startWheel = (e) => {
+  const el = e.currentTarget
+  const r = el.getBoundingClientRect()
+  wlCenter = { x: r.left + r.width / 2, y: r.top + r.height / 2 }
+  wlPrevAngle = Math.atan2(e.clientY - wlCenter.y, e.clientX - wlCenter.x) * 180 / Math.PI
+}
+const onWheel = (e) => {
+  if (!wlCenter) return
+  const cur = Math.atan2(e.clientY - wlCenter.y, e.clientX - wlCenter.x) * 180 / Math.PI
+  let d = cur - wlPrevAngle
+  if (d > 180) d -= 360
+  if (d < -180) d += 360
+  wheelRot.value += d
+  wlPrevAngle = cur
+}
+const endWheel = () => { wlCenter = null }
+
+watch(wheelOpen, (v) => { document.body.style.overflow = v ? 'hidden' : '' })
 
 const themeIcon = ref('☀️')
 const isDark = ref(false)
@@ -109,7 +202,7 @@ const toggleTheme = () => {
 const onScroll = () => {
   const y = window.scrollY
   showBackTop.value = y > 400
-  if (y > lastY && y > 240 && !menuOpen.value) navHidden.value = true
+  if (y > lastY && y > 240 && !wheelOpen.value) navHidden.value = true
   else navHidden.value = false
   lastY = y
 }
@@ -207,6 +300,60 @@ onUnmounted(() => {
 
 <style>
 .app-root { min-height: 100vh; position: relative; z-index: 1; }
+
+/* ========== 手机端触发条 + 圆盘菜单 ========== */
+.mobile-trigger { display: none; }
+.wheel-layer { position: fixed; inset: 0; z-index: 70; }
+.wheel-mask { position: absolute; inset: 0; background: color-mix(in srgb, var(--bg) 60%, #0b1020cc); backdrop-filter: blur(12px); }
+.wheel-wrap { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 320px; height: 320px; pointer-events: none; }
+.wheel {
+  width: 100%; height: 100%; border-radius: 50%; position: relative; pointer-events: auto;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-elev) 45%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+  box-shadow: 0 0 50px rgba(0,0,0,.3);
+  cursor: grab; touch-action: none; transition: transform .12s linear;
+}
+.wheel:active { cursor: grabbing; }
+.wheel-hub {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 80px; height: 80px; border-radius: 50%; background: var(--bg-soft);
+  border: 4px solid var(--border); display: flex; align-items: center; justify-content: center; z-index: 10;
+}
+.wheel-hub button {
+  width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--accent); color: #fff; font-size: 1.1rem; font-weight: 900;
+  box-shadow: 0 6px 18px var(--accent-soft); transition: transform .3s var(--ease), background .3s var(--ease);
+}
+.wheel-hub button:hover { background: var(--gem-rose); transform: rotate(90deg); }
+.wheel-node { position: absolute; top: 50%; left: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; z-index: 5; }
+.wheel-node a {
+  display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;
+  border-radius: 50%; text-decoration: none; font-size: .7rem; font-weight: 800;
+  background: var(--bg-elev); color: var(--text); border: 1px solid var(--border);
+  box-shadow: var(--shadow); transition: transform .3s var(--ease), background .3s var(--ease);
+}
+.wheel-node a.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; box-shadow: 0 0 15px var(--accent-soft); transform: scale(1.1); }
+.wheel-enter-active .wheel-wrap, .wheel-leave-active .wheel-wrap { transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .3s var(--ease); }
+.wheel-enter-from .wheel-wrap, .wheel-leave-to .wheel-wrap { transform: translate(-50%, -50%) scale(.5) rotate(-90deg); opacity: 0; }
+.wheel-enter-active .wheel-mask, .wheel-leave-active .wheel-mask { transition: opacity .3s var(--ease); }
+.wheel-enter-from .wheel-mask, .wheel-leave-to .wheel-mask { opacity: 0; }
+
+@media (max-width: 768px) {
+  .pc-only { display: none !important; }
+  .mobile-trigger {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    position: fixed; top: 50%; right: 0; margin-top: -56px; width: 48px; height: 112px;
+    border-radius: 999px 0 0 999px; z-index: 60; touch-action: none; cursor: grab;
+    background: color-mix(in srgb, var(--accent) 80%, transparent);
+    backdrop-filter: blur(12px); box-shadow: -5px 0 20px var(--accent-soft);
+    border: 1px solid color-mix(in srgb, #fff 30%, transparent); border-right: none;
+    transition: transform .5s var(--ease), opacity .5s var(--ease); padding-right: 6px;
+  }
+  .mobile-trigger span { width: 6px; height: 6px; border-radius: 50%; background: #fff; opacity: .9; }
+  .mobile-trigger.is-hidden { transform: translateX(100%) !important; opacity: 0; pointer-events: none; }
+}
+@media (prefers-reduced-motion: reduce) { .wheel { transition: none; } }
 .cursor-dot {
   position: fixed; top: 0; left: 0; width: 9px; height: 9px; border-radius: 50%;
   background: var(--accent); pointer-events: none; z-index: 9999; mix-blend-mode: difference;
