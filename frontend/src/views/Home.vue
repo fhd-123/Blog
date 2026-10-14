@@ -123,9 +123,18 @@
               </div>
             </div>
 
+            <!-- 对齐参照站 ThemeToggleBlock：日夜滑动球 + 🌸/✨ 交叉过渡 -->
             <div class="bento theme-block reveal" @click="toggleTheme">
-              <div class="tb-icon">{{ themeIcon }}</div>
-              <div class="tb-label">{{ isDark ? '流萤飞舞的深空' : '日间模式' }}</div>
+              <div class="tb-orb">
+                <div class="tb-sky" :class="{ up: isDark }"></div>
+                <div class="tb-night" :class="{ down: isDark }"></div>
+                <div class="tb-emoji" :class="{ hide: isDark }">🌸</div>
+                <div class="tb-emoji alt" :class="{ show: isDark }">✨</div>
+              </div>
+              <div class="tb-text">
+                <h3>{{ isDark ? '夜间模式' : '日间模式' }}</h3>
+                <p>{{ isDark ? '流萤飞舞的深空' : '落樱漫舞的清晨' }}</p>
+              </div>
             </div>
           </div>
         </div>
