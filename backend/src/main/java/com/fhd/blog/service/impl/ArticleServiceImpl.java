@@ -11,6 +11,7 @@ import com.fhd.blog.dto.ArticleQueryDTO;
 import com.fhd.blog.entity.Article;
 import com.fhd.blog.entity.ArticleTag;
 import com.fhd.blog.entity.Category;
+import com.fhd.blog.entity.Tag;
 import com.fhd.blog.mapper.ArticleMapper;
 import com.fhd.blog.mapper.ArticleTagMapper;
 import com.fhd.blog.mapper.CategoryMapper;

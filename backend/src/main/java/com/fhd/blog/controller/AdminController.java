@@ -3,12 +3,23 @@ package com.fhd.blog.controller;
 import com.fhd.blog.common.Result;
 import com.fhd.blog.dto.*;
 import com.fhd.blog.entity.Article;
+import com.fhd.blog.entity.Category;
+import com.fhd.blog.entity.Comment;
+import com.fhd.blog.entity.Essay;
 import com.fhd.blog.entity.FriendLink;
+import com.fhd.blog.entity.Moment;
+import com.fhd.blog.entity.Music;
+import com.fhd.blog.entity.Photo;
+import com.fhd.blog.entity.Project;
+import com.fhd.blog.entity.SiteProfile;
+import com.fhd.blog.entity.Tag;
+import com.fhd.blog.entity.ThoughtTree;
 import com.fhd.blog.service.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController

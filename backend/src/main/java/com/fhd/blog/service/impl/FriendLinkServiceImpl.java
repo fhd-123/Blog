@@ -8,6 +8,8 @@ import com.fhd.blog.mapper.FriendLinkMapper;
 import com.fhd.blog.service.FriendLinkService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FriendLinkServiceImpl extends ServiceImpl<FriendLinkMapper, FriendLink> implements FriendLinkService {
 

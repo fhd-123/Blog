@@ -6,8 +6,14 @@ import com.fhd.blog.dto.ArticleQueryDTO;
 import com.fhd.blog.dto.CommentDTO;
 import com.fhd.blog.entity.Article;
 import com.fhd.blog.entity.Category;
+import com.fhd.blog.entity.Essay;
 import com.fhd.blog.entity.FriendLink;
+import com.fhd.blog.entity.Moment;
+import com.fhd.blog.entity.Music;
+import com.fhd.blog.entity.Photo;
+import com.fhd.blog.entity.Project;
 import com.fhd.blog.entity.Tag;
+import com.fhd.blog.entity.ThoughtTree;
 import com.fhd.blog.service.*;
 import org.springframework.web.bind.annotation.*;
 
