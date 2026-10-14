@@ -10,7 +10,7 @@
         <div class="chatter-date">{{ c.date }}</div>
         <h3>{{ c.title }}</h3>
         <p>{{ c.summary }}</p>
-        <div class="tags"><span v-for="t in (c.tags || '').split(',')" :key="t" v-if="t">#{{ t }}</span></div>
+        <div class="tags"><span v-for="t in (c.tags || '').split(',').filter(Boolean)" :key="t">#{{ t }}</span></div>
       </router-link>
     </div>
     <el-empty v-if="!loading && essays.length === 0" description="暂无随笔" />

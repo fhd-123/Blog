@@ -35,9 +35,24 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public PageResult<Article> pageArticles(ArticleQueryDTO query) {
         LambdaQueryWrapper<Article> wrapper = Wrappers.lambdaQuery(Article.class);
-        if (query.getCategoryId() != null) {
+
+        // 分类名 -> id 过滤（公开端按 name 传参）
+        if (StringUtils.hasText(query.getCategory())) {
+            Category c = categoryMapper.selectOne(
+                    Wrappers.lambdaQuery(Category.class).eq(Category::getName, query.getCategory()));
+            if (c != null) wrapper.eq(Article::getCategoryId, c.getId());
+            else wrapper.eq(Article::getCategoryId, -1L); // 无匹配分类，返回空
+        } else if (query.getCategoryId() != null) {
             wrapper.eq(Article::getCategoryId, query.getCategoryId());
         }
+
+        // 标签名过滤（多对多）
+        if (StringUtils.hasText(query.getTag())) {
+            List<Long> ids = baseMapper.selectArticleIdsByTagName(query.getTag());
+            wrapper.in(ids != null && !ids.isEmpty(), Article::getId, ids);
+            if (ids == null || ids.isEmpty()) wrapper.eq(Article::getId, -1L);
+        }
+
         if (StringUtils.hasText(query.getKeyword())) {
             wrapper.like(Article::getTitle, query.getKeyword());
         }

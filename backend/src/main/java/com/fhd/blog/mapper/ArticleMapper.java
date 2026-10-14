@@ -22,6 +22,12 @@ public interface ArticleMapper extends BaseMapper<Article> {
             + "WHERE at.article_id = #{articleId}")
     List<com.fhd.blog.entity.Tag> selectTagsByArticleId(@Param("articleId") Long articleId);
 
+    /** 按标签名筛选文章 id（用于公开端标签过滤） */
+    @Select("SELECT DISTINCT at.article_id FROM article_tag at "
+            + "LEFT JOIN tag t ON t.id = at.tag_id "
+            + "WHERE t.name = #{tagName}")
+    List<Long> selectArticleIdsByTagName(@Param("tagName") String tagName);
+
     /** 阅读量 +1 */
     @Select("UPDATE article SET views = views + 1 WHERE id = #{id}")
     void incrementViews(@Param("id") Long id);

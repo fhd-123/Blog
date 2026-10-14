@@ -11,7 +11,7 @@
         <h3>{{ pr.title }}</h3>
         <p>{{ pr.description }}</p>
         <div class="tags" style="margin-bottom:14px;">
-          <span v-for="t in (pr.tags || '').split(',')" :key="t" v-if="t">{{ t }}</span>
+          <span v-for="t in (pr.tags || '').split(',').filter(Boolean)" :key="t">{{ t }}</span>
         </div>
         <div class="project-link">查看详情 →</div>
       </a>

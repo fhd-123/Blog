@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div v-if="article">
-      <router-link to="/articles" class="widget-link">← 返回文章列表</router-link>
+      <router-link to="/archive" class="widget-link">← 返回文章列表</router-link>
       <article class="article-detail">
         <span class="post-cat">{{ article.categoryName || '未分类' }}</span>
         <h1>{{ article.title }}</h1>

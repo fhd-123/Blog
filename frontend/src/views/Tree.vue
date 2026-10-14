@@ -18,7 +18,7 @@
         <div class="tree-card">
           <div class="tree-title">{{ b.title }}</div>
           <p class="tree-sub">{{ b.description }}</p>
-          <div class="tags"><span v-for="t in (b.tags || '').split(',')" :key="t" v-if="t">#{{ t }}</span></div>
+          <div class="tags"><span v-for="t in (b.tags || '').split(',').filter(Boolean)" :key="t">#{{ t }}</span></div>
         </div>
       </div>
     </div>
