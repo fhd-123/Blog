@@ -182,7 +182,8 @@ INSERT INTO site_profile (`key`, `value`) VALUES
 ('about_education', '[{"title":"江西服装学院","desc":"本科 · 软件工程 · 2022 - 2026","tags":["蓝桥杯省赛三等奖","校级润华奖程序设计赛二等奖","校级微电影大赛一等奖"]}]'),
 ('footer_marquee', '["收集值得收藏的微光","Spring Boot","Vue3","MySQL","Redis","全栈实践"]'),
 ('footer_badges', '["Spring Boot","Vue3","Element Plus","MySQL","MyBatis-Plus","前后端分离"]'),
-('danmaku_list', '["保持热爱，奔赴山海","在代码里收集宝藏","愿每一次提交都有回响","慢一点，也没关系","今天也要好好写代码","万物皆有裂痕，那是光照进来的地方","祝大家少些 Bug，多点 Star","星光不问赶路人"]');
+('danmaku_list', '["保持热爱，奔赴山海","在代码里收集宝藏","愿每一次提交都有回响","慢一点，也没关系","今天也要好好写代码","万物皆有裂痕，那是光照进来的地方","祝大家少些 Bug，多点 Star","星光不问赶路人"]'),
+('friend_apply_format', '站点名称：\n站点地址：\n站点描述：\n头像链接：');
 
 -- 项目（项目矩阵）
 DROP TABLE IF EXISTS project;
