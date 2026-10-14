@@ -13,3 +13,16 @@ node_modules/
 
 # 项目数据（非博客内容）
 .workbuddy/
+
+# 构建产物
+backend/target/
+frontend/dist/
+
+# 忽略根目录遗留的静态站点文件（已被前后端分离工程取代）
+index.html
+about.html
+articles.html
+links.html
+assets/
+posts/
+.nojekyll
